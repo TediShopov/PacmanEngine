@@ -1,32 +1,125 @@
-# Prerequisites
-*.d
+# ------------------------------
+# Core Build Outputs
+# ------------------------------
+# Visual Studio build directories
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+ipch/
+out/
+x64/
+x86/
+build/
+*.userosscache
+*.sdf
+*.opensdf
+*.tlog
+*.log
+*.pdb
+*.ilk
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+# CMake intermediate files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.dir/
+*.cbp
+*.vcxproj.user
+*.vcxproj.filters
+*.vcxproj.FileListAbsolute.txt
+*.code-workspace
 
-# Precompiled Headers
-*.gch
-*.pch
+# ------------------------------
+# Visual Studio IDE
+# ------------------------------
+.vs/
+*.vcxproj.user
+*.vcxproj.filters
+*.suo
+*.user
+*.ncb
+*.opendb
+*.VC.db
+*.VC.VC.opendb
+Debug/
+Release/
+x64/
+x86/
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
+
+# ------------------------------
+# SFML and third-party binaries
+# ------------------------------
+# Don’t commit SFML DLLs, libs, or downloaded SDKs.
+# They should be referenced via external/ or system path.
+SFML-*/lib/
+SFML-*/bin/
+external/SFML*/
 *.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
 *.lib
+*.pdb
+
+# ------------------------------
+# OS / Tooling Junk
+# ------------------------------
+# Windows
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+*.swp
+*.swo
+
+# ------------------------------
+# IDE / Editor Configurations
+# ------------------------------
+*.code-workspace
+.vscode/
+.idea/
+*.launch
+*.tasks
+*.cache
+
+# ------------------------------
+# Project-specific
+# ------------------------------
+# Generated assets or cached data
+assets/cache/
+assets/tmp/
+*.tmp
+*.bak
+*.log
+*.pdb
+*.ilk
+*.tlog
+
+*.bak
+*.tmp
+
+# Debug or profiling data
+*.prof
+*.mem
+*.stackdump
+*.dmp
+
+# Ignore generated documentation or exports
+docs/generated/
+*.html
+*.pdf
+*.rtf
 
 # Executables
 *.exe
-*.out
-*.app
+
+
+
