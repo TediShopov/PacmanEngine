@@ -18,12 +18,12 @@ public:
 	std::unique_ptr<IInput> input;
 
 	Engine();
-
 	void initGameLevelGrid();
 
 	void initSprites();
 
 	void initTextures();
+
 
 	int run();
 	void fixedUpdate(float dt);

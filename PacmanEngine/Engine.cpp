@@ -23,9 +23,10 @@ Engine::Engine() :
 	//Init debug grid entity
 	pacman = std::make_unique<GridEntity>();
 	pacman->levelGrid = this->gameGrid.get();
-	pacman->worldPos = gameGrid->getPixelCoordinates(0, 0);
+	pacman->worldPos = gameGrid->getPixelCoordinates(2, 2);
 	pacman->gridPosition = { 0,0 };
 	pacman->sprite = spriteMap.at(Pacman).get();
+	pacman->movementSpeed = 1;
 }
 
 void Engine::initGameLevelGrid()
@@ -71,7 +72,7 @@ void Engine::initSprites()
 
 	//Create Pacman Sprite
 	auto pacmanSprite = std::make_unique<sf::Sprite>(*defSprite.get());
-	pacmanSprite->setColor(DebugWallColor);
+	pacmanSprite->setOrigin({8,8});
 	pacmanSprite->setTexture(*textureMap.at(Pacman));
 
 	this->spriteMap.insert({ BigCoin, std::move(defSprite) });
@@ -108,6 +109,8 @@ int Engine::run()
 		lag += dt.count();
 
 		input->pumpEvents(*window);
+		if (input->isQuitRequested())
+			break;
 
 		while (lag >= fixedDt)
 		{
@@ -124,7 +127,7 @@ int Engine::run()
 void Engine::fixedUpdate(float dt)
 {
 	pacman->updateInput(input.get());
-	pacman->update(dt);
+	pacman->fixedUpdate(dt);
 	input->update(dt);
 	//Debug Control Game Level Grid
 #ifdef _DEBUG

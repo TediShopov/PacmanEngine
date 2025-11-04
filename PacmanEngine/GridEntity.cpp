@@ -4,15 +4,30 @@
 
 void GridEntity::updateInput(const IInput* input)
 {
-	 float moveSpeed = 0.1;
 	 if (input->isKeyDown((int)sf::Keyboard::Key::A))
-		 this->worldPos.x += -moveSpeed;
+		 this->desiredDirecton = sf::Vector2i{ -1,0 };
 	 else if (input->isKeyDown((int)sf::Keyboard::Key::D))
-		 this->worldPos.x += moveSpeed;
+		 this->desiredDirecton = sf::Vector2i{ 1,0};
 	 else if (input->isKeyDown((int)sf::Keyboard::Key::W))
-		 this->worldPos.y += -moveSpeed;
+		 this->desiredDirecton = sf::Vector2i{ 0,-1 };
 	 else if (input->isKeyDown((int)sf::Keyboard::Key::S))
-		 this->worldPos.y += moveSpeed;
+		 this->desiredDirecton = sf::Vector2i{ 0,1 };
+}
+
+void GridEntity::fixedUpdate(float dt)
+{
+	//Update this only if possible
+	this->currentDirecton = desiredDirecton;
+	gridPosition = this->levelGrid->getCellCoordinates(worldPos); 
+	auto currentTile = this->levelGrid->at(gridPosition.x, gridPosition.y);
+	auto nextTile = this->levelGrid->at(gridPosition.x + currentDirecton.x, gridPosition.y + currentDirecton.y);
+	if (nextTile != GameLevelGrid::TileType::Wall)
+	{
+		this->worldPos.x += (float)currentDirecton.x * movementSpeed;
+		this->worldPos.y += (float)currentDirecton.y * movementSpeed;
+		//this->worldPos = this->levelGrid->getPixelCoordinates(gridPosition.x + currentDirecton.x, gridPosition.y + currentDirecton.y);
+	}
+	
 
 
 }

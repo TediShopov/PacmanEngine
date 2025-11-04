@@ -54,10 +54,18 @@ public:
 		return this->Position;
 	}
 
+	bool isInRange(int row, int col) const
+	{
+		return	row >= 0 && row < rows && 
+				col >= 0 && col < cols;
+
+	}
 
 	TileType at(int row, int col) const
 	{
-		return gridData[getFlatIndex(row,col)];
+		if (isInRange(row, col))
+			return gridData[getFlatIndex(row, col)];
+		return TileType::Wall;
 	}
 
 	constexpr int getFlatIndex(int row, int col) const
@@ -67,8 +75,23 @@ public:
 	}
 	constexpr sf::Vector2f getPixelCoordinates(int row, int col) const
 	{
-		return { Position.y + (float)row * gridTileDimensions.y ,Position.x + (float)col * gridTileDimensions.x};
+		return { Position.x + (float)row * gridTileDimensions.y,Position.y + (float)col * gridTileDimensions.x};
 
+	}
+	constexpr sf::Vector2f getPixelCoordinates(sf::Vector2i pos) const
+	{
+		return getPixelCoordinates(pos.x, pos.y);
+
+	}
+	constexpr sf::Vector2i getCellCoordinates(float pixelX, float pixelY) const
+	{
+		int x = (pixelX - Position.x) / gridTileDimensions.x;
+		int y = (pixelY - Position.y) / gridTileDimensions.y;
+		return { x,y };
+	}
+	constexpr sf::Vector2i getCellCoordinates(sf::Vector2f position) const
+	{
+		return getCellCoordinates(position.x, position.y);
 	}
 private:
 	//Represent the top-left cornect of the grid
