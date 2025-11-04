@@ -24,3 +24,8 @@ void WindowSFML::close()
 {
 	this->window.close();
 }
+
+ sf::RenderWindow* WindowSFML::raw() {
+	return &this->window;
+
+}

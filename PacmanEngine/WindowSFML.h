@@ -7,6 +7,7 @@ class WindowSFML : public IWindow
 public:
 	WindowSFML() : window(sf::VideoMode(DefaultEngineWindowSize),DefaultEngineName)
 	{
+		window.setKeyRepeatEnabled(false);
 			
 	}
 
@@ -15,6 +16,7 @@ public:
 	virtual void display() override;
 	virtual void clear() override;
 	virtual void close() override; 
+	sf::RenderWindow* raw();
 private:
 	sf::RenderWindow window;
 };

@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "WindowSFML.h"
 #include "Input.h"
+#include "Grid.h"
 
 class Engine
 {
@@ -14,36 +15,22 @@ public:
 	std::unique_ptr<IWindow> window;
 	std::unique_ptr<IInput> input;
 
-	Engine():
-		window(std::make_unique<WindowSFML>()),
-		input(std::make_unique<Input>())
-	{
-			
-	}
+	Engine();
 
-	int run()
-	{
-		while (window->isOpen()) {
-			//$input->pumpEvents(*window);
-			input->pumpEvents(*window);
-			if (input->isQuitRequested())
-				break;
+	void initGameLevelGrid();
 
-			//time_->tick();
-		   // while (time_->stepFixed()) {
-		   //	 // later: update logic
-		   // }
+	void initSprites();
 
-			//auto& win = static_cast<WindowSFML&>(*window).raw();
-			window->clear();
-			window->display();
-		}
+	void initTextures();
 
-		window->close();
-		return 0;
+	int run();
+	void update();
 
 
-	}
+	//std::unique_ptr<sf::Texture> defTexture;
+	std::unordered_map<std::string, std::unique_ptr<sf::Texture>> textureMap;
+	std::unordered_map<std::string, std::unique_ptr<sf::Sprite>> spriteMap;
+	std::unique_ptr<GameLevelGrid> gameGrid;
 
 
 

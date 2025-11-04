@@ -23,7 +23,8 @@ void Input::pumpEvents(IWindow& win)
 			if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
 				isQuitRequsted = true;
 			else
-				setKeyDown((int)keyPressed->code);
+				pressed.push_back((int)keyPressed->code);
+				//isPressed((int)keyPressed->code);
 		}
 		else if (const auto* keyPressed = event->getIf<sf::Event::KeyReleased>())
 		{
@@ -64,12 +65,12 @@ bool Input::isKeyDown(int key)
 // Check if a key is pressed. Currently down, but will be automatically set up at the end of frame.
 bool Input::isPressed(int key)
 {
-	bool cond = isKeyDown(key);
-	if (cond)
-	{
-		pressed.push_back(key);
-		return cond;
-	}
+	return std::find(pressed.begin(), pressed.end(), key) != pressed.end();
+//	if (isKeyDown(key))
+//	{
+//		pressed.push_back(key);
+//		return true;
+//	}
 	return false;
 }
 
