@@ -23,8 +23,11 @@ void Input::pumpEvents(IWindow& win)
 			if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
 				isQuitRequsted = true;
 			else
-				pressed.push_back((int)keyPressed->code);
-				//isPressed((int)keyPressed->code);
+			{
+				//pressed.push_back((int)keyPressed->code);
+				setKeyDown((int)keyPressed->code);
+
+			}
 		}
 		else if (const auto* keyPressed = event->getIf<sf::Event::KeyReleased>())
 		{
@@ -53,7 +56,7 @@ void Input::setKeyUp(int key)
 }
 
 // Check if a key is currently down. Returns true if key is down.
-bool Input::isKeyDown(int key)
+bool Input::isKeyDown(int key) const
 {
 	if (key >= 0)
 	{
@@ -63,7 +66,7 @@ bool Input::isKeyDown(int key)
 }
 
 // Check if a key is pressed. Currently down, but will be automatically set up at the end of frame.
-bool Input::isPressed(int key)
+bool Input::isPressed(int key) const
 {
 	return std::find(pressed.begin(), pressed.end(), key) != pressed.end();
 //	if (isKeyDown(key))
@@ -113,13 +116,13 @@ void Input::setMousePosition(int lx, int ly)
 }
 
 // Returns mouse x-coordinate
-int Input::getMouseX()
+int Input::getMouseX() const
 {
 	return mouse.x;
 }
 
 // Returns mouse y-coordinate
-int Input::getMouseY()
+int Input::getMouseY() const
 {
 	return mouse.y;
 }
@@ -131,7 +134,7 @@ void Input::setLeftMouse(MouseState state)
 }
 
 // Checks if Left mouse button is down. Returning true if button is DOWN or PRESSED
-bool Input::isLeftMouseDown()
+bool Input::isLeftMouseDown() const
 {
 	if (mouse.left == MouseState::DOWN || mouse.left == MouseState::PRESSED)
 	{
@@ -141,7 +144,7 @@ bool Input::isLeftMouseDown()
 }
 
 // Checks if left mouse button is pressed. If set to DOWN, is updated to PRESSED. Automatically updated in update().
-bool Input::isLeftMousePressed()
+bool Input::isLeftMousePressed() const
 {
 	if (mouse.left == MouseState::DOWN || mouse.left == MouseState::PRESSED)
 	{
@@ -158,7 +161,7 @@ void Input::setRightMouse(MouseState state)
 }
 
 // Checks if right mouse button is down. Returning true if button is DOWN or PRESSED
-bool Input::isRightMouseDown()
+bool Input::isRightMouseDown() const
 {
 	if (mouse.right == MouseState::DOWN || mouse.right == MouseState::PRESSED)
 	{
@@ -168,7 +171,7 @@ bool Input::isRightMouseDown()
 }
 
 // Checks if right mouse button is pressed. If set to DOWN, is updated to PRESSED. Automatically updated in update().
-bool Input::isRightMousePressed()
+bool Input::isRightMousePressed() const
 {
 	if (mouse.right == MouseState::DOWN || mouse.right == MouseState::PRESSED)
 	{
@@ -178,7 +181,7 @@ bool Input::isRightMousePressed()
 	return false;
 }
 
-bool Input::isPressedTwice(int bt)
+bool Input::isPressedTwice(int bt) const
 {
 	if (lastKeyPressed == bt && doublePress == true)
 	{
@@ -188,7 +191,7 @@ bool Input::isPressedTwice(int bt)
 	return false;
 }
 
-bool Input::isQuitRequested()
+bool Input::isQuitRequested() const
 {
 	return isQuitRequsted;
 }

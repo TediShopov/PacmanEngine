@@ -1,33 +1,38 @@
 #include "Engine.h"
+#include "chrono"
 
 //A quick and dirty way to reference textures and sprites
 const std::string BigCoin = "BigCoin";
 const std::string Wall = "Wall";
+const std::string Pacman = "Pacman";
 
 //Game configurable properties
-const sf::Vector2i PacTileSetSpriteDimensions {16,16};
-const sf::Vector2f PacTileSetSpriteOrigin {8,8};
-const sf::Vector2i InitialGridDimensions {10,10};
-const sf::Color DebugWallColor {5,10,120,255};
+const sf::Vector2i PacTileSetSpriteDimensions{ 16,16 };
+const sf::Vector2f PacTileSetSpriteOrigin{ 8,8 };
+const sf::Vector2i InitialGridDimensions{ 10,10 };
+const sf::Color DebugWallColor{ 5,10,120,255 };
 
 Engine::Engine() :
 	window(std::make_unique<WindowSFML>()),
 	input(std::make_unique<Input>())
 {
 	initTextures();
-
 	initSprites();
-
 	initGameLevelGrid();
 
+	//Init debug grid entity
+	pacman = std::make_unique<GridEntity>();
+	pacman->levelGrid = this->gameGrid.get();
+	pacman->worldPos = gameGrid->getPixelCoordinates(0, 0);
+	pacman->gridPosition = { 0,0 };
+	pacman->sprite = spriteMap.at(Pacman).get();
 }
 
 void Engine::initGameLevelGrid()
 {
 	gameGrid = std::make_unique<GameLevelGrid>(InitialGridDimensions.x, InitialGridDimensions.y,
 		sf::Vector2f{ (float)PacTileSetSpriteDimensions.x * 2,(float)PacTileSetSpriteDimensions.y * 2 });
-	gameGrid->setPosition(sf::Vector2f{ PacTileSetSpriteDimensions.x * 2.0f,PacTileSetSpriteDimensions.y * 2.0f});
-
+	gameGrid->setPosition(sf::Vector2f{ PacTileSetSpriteDimensions.x * 2.0f,PacTileSetSpriteDimensions.y * 2.0f });
 
 	gameGrid->tileToSpriteMap.insert({ GameLevelGrid::TileType::Dot, *spriteMap.at(BigCoin) });
 	gameGrid->tileToSpriteMap.insert({ GameLevelGrid::TileType::Wall,*spriteMap.at(Wall) });
@@ -35,23 +40,19 @@ void Engine::initGameLevelGrid()
 	auto sfmlWindow = static_cast<WindowSFML*>(window.get());
 	auto win = sfmlWindow->raw();
 
-
-
 	using TT = GameLevelGrid::TileType;
 	this->gameGrid->loadLevel(
 		{
 			TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,
-			TT::Wall,TT::Dot,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,
-			TT::Wall,TT::Wall,TT::Dot,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,
-			TT::Wall,TT::Wall,TT::Wall,TT::Dot,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,
-			TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Dot,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,
-			TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Dot,TT::Wall,TT::Wall,TT::Wall,TT::Wall,
-			TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Dot,TT::Wall,TT::Wall,TT::Wall,
-			TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Dot,TT::Wall,TT::Wall,
-			TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Dot,TT::Wall,
+			TT::Wall,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Wall,
+			TT::Wall,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Wall,
+			TT::Wall,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Wall,
+			TT::Wall,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Wall,
+			TT::Wall,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Wall,
+			TT::Wall,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Wall,
+			TT::Wall,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Wall,
+			TT::Wall,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Wall,
 			TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,
-
-
 		}
 	);
 }
@@ -64,12 +65,18 @@ void Engine::initSprites()
 	auto globalBounds = defSprite->getGlobalBounds().size;
 
 	//Create Wall Sprite
-	sf::Sprite s(*defSprite.get());
 	auto wallSprite = std::make_unique<sf::Sprite>(*defSprite.get());
 	wallSprite->setColor(DebugWallColor);
 	wallSprite->setTexture(*textureMap.at(Wall));
+
+	//Create Pacman Sprite
+	auto pacmanSprite = std::make_unique<sf::Sprite>(*defSprite.get());
+	pacmanSprite->setColor(DebugWallColor);
+	pacmanSprite->setTexture(*textureMap.at(Pacman));
+
 	this->spriteMap.insert({ BigCoin, std::move(defSprite) });
 	this->spriteMap.insert({ Wall, std::move(wallSprite) });
+	this->spriteMap.insert({ Pacman, std::move(pacmanSprite) });
 }
 
 void Engine::initTextures()
@@ -77,88 +84,76 @@ void Engine::initTextures()
 	std::unique_ptr<sf::Texture> defTexture = std::make_unique<sf::Texture>("../assets/BigCoin.png");
 	//std::unique_ptr<sf::Texture> wallTexture = std::make_unique<sf::Texture>(sf::Vector2u{ 16,16 }, false);
 	std::unique_ptr<sf::Texture> wallTexture = std::make_unique<sf::Texture>("../assets/Wall.png");
+	std::unique_ptr<sf::Texture> pacmanTexture = std::make_unique<sf::Texture>("../assets/PacMan.png");
 
 	this->textureMap.insert({ BigCoin,std::move(defTexture) });
 	this->textureMap.insert({ Wall,std::move(wallTexture) });
-
+	this->textureMap.insert({ Pacman,std::move(pacmanTexture) });
 }
 
- int Engine::run()
+int Engine::run()
 {
-	while (window->isOpen()) {
-		//$input->pumpEvents(*window);
+	using time = std::chrono::steady_clock;
+	using secondsf = std::chrono::duration<float>;
+	auto previous = time::now();
+
+	float fixedDt = 0.0166f; //approximately 60hz update loop
+	float lag = 0.0f;
+
+	while (window->isOpen())
+	{
+		auto current = time::now();
+		secondsf dt = current - previous;
+		previous = current;
+		lag += dt.count();
+
 		input->pumpEvents(*window);
-		if (input->isQuitRequested())
-			break;
 
-		//time_->tick();
-//		 while (time_->stepFixed()) {
-//		 }
+		while (lag >= fixedDt)
+		{
+			fixedUpdate(fixedDt);
+			lag -= fixedDt;
+		}
 
-		window->clear();
-		this->update();
-		//auto& win = static_cast<WindowSFML&>(*window).raw();
-		window->display();
+		update(lag);
+		render();
 	}
-
-	window->close();
 	return 0;
-
-
 }
 
- void Engine::update()
- {
-
-	 auto sfmlWindow = static_cast<WindowSFML*>(window.get());
-
-//	 auto currPos = defSprite->getPosition();
-//	 float moveSpeed = 0.001;
-//
-//	 if (input->isKeyDown((int)sf::Keyboard::Key::A))
-//		 currPos.x += -moveSpeed;
-//	 else if (input->isKeyDown((int)sf::Keyboard::Key::D))
-//		 currPos.x += moveSpeed;
-//	 else if (input->isKeyDown((int)sf::Keyboard::Key::W))
-//		 currPos.y += -moveSpeed;
-//	 else if (input->isKeyDown((int)sf::Keyboard::Key::S))
-//		 currPos.y += moveSpeed;
-
-
-	 //Debug Control Game Level Grid
+void Engine::fixedUpdate(float dt)
+{
+	pacman->updateInput(input.get());
+	pacman->update(dt);
+	input->update(dt);
+	//Debug Control Game Level Grid
 #ifdef _DEBUG
-	 
+	if (input->isKeyDown((int)sf::Keyboard::Key::J))
+		this->gameGrid->gridTileDimensions.x += 10 * dt;
+	else if (input->isKeyDown((int)sf::Keyboard::Key::K))
+		this->gameGrid->gridTileDimensions.y -= 10 * dt;
+	else if (input->isKeyDown((int)sf::Keyboard::Key::I))
+		this->gameGrid->gridTileDimensions.y += 10 * dt;
+	else if (input->isKeyDown((int)sf::Keyboard::Key::L))
+		this->gameGrid->gridTileDimensions.x -= 1 * dt;
 
-
-
-	 if (input->isPressed((int)sf::Keyboard::Key::J))
-		 this->gameGrid->gridTileDimensions.x += 1;
-	 else if (input->isPressed((int)sf::Keyboard::Key::K))
-		 this->gameGrid->gridTileDimensions.y -= 1;
-	 else if (input->isPressed((int)sf::Keyboard::Key::I))
-		 this->gameGrid->gridTileDimensions.y += 1;
-	 else if (input->isPressed((int)sf::Keyboard::Key::L))
-		 this->gameGrid->gridTileDimensions.x -= 1;
-
-	  if (input->isPressed((int)sf::Keyboard::Key::U))
-		  this->gameGrid->tileToSpriteMap.at(GameLevelGrid::TileType::Dot).scale({1.1,1.1});
-	  else if (input->isPressed((int)sf::Keyboard::Key::O))
-		  this->gameGrid->tileToSpriteMap.at(GameLevelGrid::TileType::Dot).scale({0.9,0.9});
-
+	if (input->isKeyDown((int)sf::Keyboard::Key::U))
+		this->gameGrid->tileToSpriteMap.at(GameLevelGrid::TileType::Dot).scale({ 1.1,1.1 });
+	else if (input->isKeyDown((int)sf::Keyboard::Key::O))
+		this->gameGrid->tileToSpriteMap.at(GameLevelGrid::TileType::Dot).scale({ 0.9,0.9 });
 #endif // _DEBUG
+}
 
+void Engine::render()
+{
+	auto sfmlWindow = static_cast<WindowSFML*>(window.get());
+	auto win = sfmlWindow->raw();
+	window->clear();
+	gameGrid->draw(*win);
+	pacman->draw(*win);
+	window->display();
+}
 
-
-
-	 //defSprite->setPosition(currPos);
-
-	 auto win = sfmlWindow->raw();
-
-
-	 input->update(0);
-
-
-	 //win->draw(*defSprite.get());
-	 gameGrid->draw(*win);
-
- }
+void Engine::update(float lag)
+{
+}

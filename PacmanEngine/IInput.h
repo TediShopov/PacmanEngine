@@ -16,16 +16,17 @@ public:
 		MouseState left, right;
 	};
 
+	virtual bool isQuitRequested() const = 0;
 
-
-	virtual bool isKeyDown(int key) = 0;
-	virtual bool isPressed(int key) = 0;
-	virtual bool isLeftMouseDown() = 0;
-	virtual bool isLeftMousePressed() = 0;
-	virtual bool isRightMouseDown() = 0;
-	virtual bool isRightMousePressed() = 0;
-	virtual int getMouseX() = 0;
-	virtual int getMouseY() = 0;
+	virtual bool isKeyDown(int key) const = 0;
+	virtual bool isPressed(int key) const = 0;
+	virtual bool isLeftMouseDown() const = 0;
+	virtual bool isLeftMousePressed() const = 0;
+	virtual bool isRightMouseDown() const = 0;
+	virtual bool isRightMousePressed() const = 0;
+	virtual int getMouseX() const = 0;
+	virtual int getMouseY() const = 0;
+	virtual bool isPressedTwice(int button) const = 0;
 
 	virtual void setKeyDown(int key) = 0;
 	virtual void setKeyUp(int key) = 0;
@@ -38,7 +39,5 @@ public:
 	virtual void setMousePosition(int lx, int ly) = 0;
 
 	virtual void update(float dt) = 0;
-	virtual bool isPressedTwice(int button) = 0;
-	virtual bool isQuitRequested() = 0;
 
 };

@@ -19,16 +19,16 @@ public:
 	virtual void pumpEvents(IWindow& win) override;
 
 	//--- GETTERS ---
-	virtual bool isKeyDown(int key) override;
-	virtual bool isPressed(int key) override;
-	virtual bool isLeftMouseDown() override;
-	virtual bool isLeftMousePressed() override;
-	virtual bool isRightMouseDown() override;
-	virtual bool isRightMousePressed() override;
-	virtual int getMouseX() override;
-	virtual int getMouseY() override;
-	virtual bool isPressedTwice(int button) override;
-	virtual bool isQuitRequested() override;
+	virtual bool isKeyDown(int key) const override;
+	virtual bool isPressed(int key) const override;
+	virtual bool isLeftMouseDown() const override;
+	virtual bool isLeftMousePressed() const override;
+	virtual bool isRightMouseDown() const override;
+	virtual bool isRightMousePressed() const override;
+	virtual int getMouseX() const override;
+	virtual int getMouseY() const override;
+	virtual bool isPressedTwice(int button) const override;
+	virtual bool isQuitRequested() const override;
 
 	//--- SETTERS ---
 	virtual void setKeyDown(int key) override;
@@ -46,5 +46,5 @@ private:
 	// Array of booleans representing keys (pressed = true, released = false)
 	bool keys[256]{ false };
 	std::vector<int> pressed;
-	Mouse mouse;
+	mutable Mouse mouse;
 };

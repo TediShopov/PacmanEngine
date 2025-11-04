@@ -3,6 +3,8 @@
 #include "WindowSFML.h"
 #include "Input.h"
 #include "Grid.h"
+#include "GridEntity.h"
+
 
 class Engine
 {
@@ -24,17 +26,14 @@ public:
 	void initTextures();
 
 	int run();
-	void update();
+	void fixedUpdate(float dt);
+	void update(float lag);
+	void render();
 
-
-	//std::unique_ptr<sf::Texture> defTexture;
+private:
 	std::unordered_map<std::string, std::unique_ptr<sf::Texture>> textureMap;
 	std::unordered_map<std::string, std::unique_ptr<sf::Sprite>> spriteMap;
 	std::unique_ptr<GameLevelGrid> gameGrid;
-
-
-
-
-	
+	std::unique_ptr<GridEntity> pacman;
 };
 
