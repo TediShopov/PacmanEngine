@@ -162,6 +162,7 @@
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="GridEntity.cpp" />
     <ClCompile Include="IMovementStrategy.cpp" />
+    <ClCompile Include="InkyMovementStrategy.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="InputMovementStrategy.cpp" />
     <ClCompile Include="main.cpp" />
@@ -179,6 +180,7 @@
     <ClInclude Include="GridEntity.h" />
     <ClInclude Include="IMovementStrategy.h" />
     <ClInclude Include="IInput.h" />
+    <ClInclude Include="InkyMovementStrategy.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="InputMovementStrategy.h" />
     <ClInclude Include="IWindow.h" />
