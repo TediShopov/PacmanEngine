@@ -73,9 +73,11 @@ public:
 		return row * cols + col;
 
 	}
+	//Return the center of the tile in pixel coordinates
 	constexpr sf::Vector2f getPixelCoordinates(int row, int col) const
 	{
-		return { Position.x + (float)row * gridTileDimensions.y,Position.y + (float)col * gridTileDimensions.x};
+
+		return { Position.x + (float)row * gridTileDimensions.y + gridTileDimensions.y/2,Position.y + (float)col * gridTileDimensions.x + gridTileDimensions.x / 2};
 
 	}
 	constexpr sf::Vector2f getPixelCoordinates(sf::Vector2i pos) const

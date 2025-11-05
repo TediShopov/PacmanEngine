@@ -25,7 +25,5 @@ public:
 	sf::Vector2i desiredDirecton;
 
 	const GameLevelGrid* levelGrid;
-	
-
 };
 
