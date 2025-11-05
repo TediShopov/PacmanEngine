@@ -153,11 +153,27 @@ int Engine::run()
 
 void Engine::fixedUpdate(float dt)
 {
+
+
+
+
 	pacman->fixedUpdate(dt);
 	chaseGhost->fixedUpdate(dt);
 	input->update(dt);
 	//Debug Control Game Level Grid
 #ifdef _DEBUG
+
+	if (input->isKeyDown((int)sf::Keyboard::Key::P))
+	{
+		auto ghost = dynamic_cast<Ghost*>(chaseGhost.get());
+		ghost->Frighten();
+
+	}
+	
+
+
+
+
 	if (input->isKeyDown((int)sf::Keyboard::Key::J))
 		this->gameGrid->gridTileDimensions.x += 10 * dt;
 	else if (input->isKeyDown((int)sf::Keyboard::Key::K))

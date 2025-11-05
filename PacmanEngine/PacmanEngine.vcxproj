@@ -157,6 +157,7 @@
   <ItemGroup>
     <ClCompile Include="ChaseMovementStrategy.cpp" />
     <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="FrightenedMovementStrategy.cpp" />
     <ClCompile Include="Ghost.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="GridEntity.cpp" />
@@ -170,6 +171,7 @@
   <ItemGroup>
     <ClInclude Include="ChaseMovementStrategy.h" />
     <ClInclude Include="Engine.h" />
+    <ClInclude Include="FrightenedMovementStrategy.h" />
     <ClInclude Include="Ghost.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="GridEntity.h" />
