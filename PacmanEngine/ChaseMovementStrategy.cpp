@@ -1,14 +1,8 @@
 #include "ChaseMovementStrategy.h"
 #include "GridEntity.h"
-#include "Grid.h"
+//#include "Grid.h"
 
 
-std::unordered_map<DirectionEnum, sf::Vector2i> Directions{
-    {UP, sf::Vector2i(0,-1)},
-    {LEFT, sf::Vector2i(0,1)},
-    {DOWN, sf::Vector2i(-1,0)},
-    {RIGHT, sf::Vector2i(1,0)}
-};
 
 sf::Vector2i ChaseMovementStrategy::computeDesiredDirection(const GridEntity& self) const
 {
@@ -18,7 +12,7 @@ sf::Vector2i ChaseMovementStrategy::computeDesiredDirection(const GridEntity& se
     std::vector<DirectionEnum> walkableDirections;
 
     // Filter tiles that are walkable = not a wall
-    for (auto& cardinalDirection : Directions)
+    for (auto& cardinalDirection : GameLevelGrid::Directions)
     {
         if(canTraverseInDirection(self,nextTile,cardinalDirection.first))
 			walkableDirections.push_back(cardinalDirection.first);
@@ -29,8 +23,8 @@ sf::Vector2i ChaseMovementStrategy::computeDesiredDirection(const GridEntity& se
     std::sort(walkableDirections.begin(), walkableDirections.end(), 
          [&](const DirectionEnum a, const DirectionEnum b)
         {
-            sf::Vector2i aTile = self.gridPosition + Directions.at(a);
-            sf::Vector2i bTile = self.gridPosition + Directions.at(b);
+            sf::Vector2i aTile = self.gridPosition + GameLevelGrid::Directions.at(a);
+            sf::Vector2i bTile = self.gridPosition + GameLevelGrid::Directions.at(b);
 
             int distanceToA = (aTile - target->gridPosition).lengthSquared();
             int distanceToB = (bTile - target->gridPosition).lengthSquared();
@@ -43,14 +37,14 @@ sf::Vector2i ChaseMovementStrategy::computeDesiredDirection(const GridEntity& se
         });
 
     if (walkableDirections.size() <= 0)
-        return Directions.at(UP);
+        return GameLevelGrid::Directions.at(UP);
 
-    return Directions.at(walkableDirections.front());
+    return GameLevelGrid::Directions.at(walkableDirections.front());
 }
 
 bool ChaseMovementStrategy::canTraverseInDirection(const GridEntity& self, sf::Vector2i nextTile,DirectionEnum dir) const
 {
-    auto tileInDir = nextTile + Directions.at(dir);
+    auto tileInDir = nextTile + GameLevelGrid::Directions.at(dir);
 
     auto grid = self.levelGrid;
     using GT = GameLevelGrid::TileType;

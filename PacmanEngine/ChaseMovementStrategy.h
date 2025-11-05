@@ -1,11 +1,6 @@
 #pragma once
 #include "IMovementStrategy.h"
-enum DirectionEnum {
-    UP,
-    LEFT,
-    DOWN,
-    RIGHT
-};
+#include "Grid.h"
 
 class ChaseMovementStrategy :
     public IMovementStrategy
