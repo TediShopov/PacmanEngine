@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <SFML/Main.hpp>
 #include "WindowSFML.h"
 #include "Input.h"
 #include "Grid.h"
@@ -18,6 +19,10 @@ public:
 	std::unique_ptr<IInput> input;
 
 	Engine();
+
+	//sf::Font font("../assets/arial.ttf");
+
+
 	void initGameLevelGrid();
 
 	void initSprites();
@@ -35,5 +40,7 @@ private:
 	std::unordered_map<std::string, std::unique_ptr<sf::Sprite>> spriteMap;
 	std::unique_ptr<GameLevelGrid> gameGrid;
 	std::unique_ptr<GridEntity> pacman;
+	sf::Font debugFont;
+	sf::Text* debugText;
 };
 

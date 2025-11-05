@@ -16,6 +16,10 @@ Engine::Engine() :
 	window(std::make_unique<WindowSFML>()),
 	input(std::make_unique<Input>())
 {
+	this->debugFont.openFromFile("../assets/arial.ttf");
+	this->debugText = new sf::Text(this->debugFont);
+
+
 	initTextures();
 	initSprites();
 	initGameLevelGrid();
@@ -31,9 +35,12 @@ Engine::Engine() :
 
 void Engine::initGameLevelGrid()
 {
+	//gameGrid = std::make_unique<GameLevelGrid>(InitialGridDimensions.x, InitialGridDimensions.y,
+	//	sf::Vector2f{ (float)PacTileSetSpriteDimensions.x * 2,(float)PacTileSetSpriteDimensions.y * 2 });
+	//gameGrid->setPosition(sf::Vector2f{ PacTileSetSpriteDimensions.x * 2.0f,PacTileSetSpriteDimensions.y * 2.0f });
 	gameGrid = std::make_unique<GameLevelGrid>(InitialGridDimensions.x, InitialGridDimensions.y,
-		sf::Vector2f{ (float)PacTileSetSpriteDimensions.x * 2,(float)PacTileSetSpriteDimensions.y * 2 });
-	gameGrid->setPosition(sf::Vector2f{ PacTileSetSpriteDimensions.x * 2.0f,PacTileSetSpriteDimensions.y * 2.0f });
+		sf::Vector2f{ (float)PacTileSetSpriteDimensions.x ,(float)PacTileSetSpriteDimensions.y });
+	gameGrid->setPosition({ 0,0 });
 
 	gameGrid->tileToSpriteMap.insert({ GameLevelGrid::TileType::Dot, *spriteMap.at(BigCoin) });
 	gameGrid->tileToSpriteMap.insert({ GameLevelGrid::TileType::Wall,*spriteMap.at(Wall) });
@@ -62,16 +69,20 @@ void Engine::initSprites()
 {
 	auto defSprite = std::make_unique<sf::Sprite>(*textureMap.at(BigCoin), sf::IntRect{ { 0,0 },PacTileSetSpriteDimensions });
 	defSprite->setOrigin(PacTileSetSpriteOrigin);
-	defSprite->scale({ 2,2 });
+	//defSprite->scale({ 2,2 });
 	auto globalBounds = defSprite->getGlobalBounds().size;
 
 	//Create Wall Sprite
 	auto wallSprite = std::make_unique<sf::Sprite>(*defSprite.get());
+	wallSprite->setOrigin({8,8});
 	wallSprite->setColor(DebugWallColor);
+	wallSprite->setScale({0.98f,0.98f});
 	wallSprite->setTexture(*textureMap.at(Wall));
 
 	//Create Pacman Sprite
 	auto pacmanSprite = std::make_unique<sf::Sprite>(*defSprite.get());
+	//pacmanSprite->setScale({0.9f,0.9f});
+	//pacmanSprite->setScale({2.f,2.f});
 	pacmanSprite->setOrigin({8,8});
 	pacmanSprite->setTexture(*textureMap.at(Pacman));
 
@@ -154,9 +165,21 @@ void Engine::render()
 	window->clear();
 	gameGrid->draw(*win);
 	pacman->draw(*win);
+	win->draw(*debugText);
+
 	window->display();
 }
 
 void Engine::update(float lag)
 {
+	debugText->setCharacterSize(15);
+
+	std::string debugString = "";
+	debugString += "Character Pixel Pos X:" + std::to_string(pacman->worldPos.x) + "Y: " + std::to_string(pacman->worldPos.y) + "\n";
+	debugString += "Character Grid Coord X:" + std::to_string(pacman->gridPosition.x) + "Y: " + std::to_string(pacman->gridPosition.y) + "\n";
+
+
+	debugText->setPosition(gameGrid->getPixelCoordinates({0,12}));
+
+	debugText->setString(debugString);
 }
