@@ -41,7 +41,8 @@ private:
 	std::unordered_map<std::string, std::unique_ptr<sf::Sprite>> spriteMap;
 	std::unique_ptr<GameLevelGrid> gameGrid;
 	std::unique_ptr<GridEntity> pacman;
-	std::vector<std::unique_ptr<GridEntity>> ghosts;
+	std::unique_ptr<GridEntity> chaseGhost;
+	//std::vector<std::unique_ptr<GridEntity>> ghosts;
 	sf::Font debugFont;
 	sf::Text* debugText;
 

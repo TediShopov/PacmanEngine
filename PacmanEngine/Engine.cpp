@@ -1,6 +1,7 @@
 #include "Engine.h"
 #include "chrono"
 #include "Pacman.h"
+#include "Ghost.h"
 
 //A quick and dirty way to reference textures and sprites
 const std::string BigCoin = "BigCoin";
@@ -31,6 +32,13 @@ Engine::Engine() :
 	pacman->gridPosition = { 2,2 };
 	pacman->worldPos = gameGrid->getPixelCoordinates(2,2);
 	pacman->movementSpeed = 1;
+
+	chaseGhost = std::make_unique<Ghost>(gameGrid.get(), pacman.get(), spriteMap.at(PacmanString).get());
+	chaseGhost->gridPosition = { 8,8 };
+	chaseGhost->worldPos = gameGrid->getPixelCoordinates(8,8);
+	chaseGhost->movementSpeed = 1;
+
+
 }
 
 void Engine::initGameLevelGrid()
@@ -142,6 +150,7 @@ int Engine::run()
 void Engine::fixedUpdate(float dt)
 {
 	pacman->fixedUpdate(dt);
+	chaseGhost->fixedUpdate(dt);
 	input->update(dt);
 	//Debug Control Game Level Grid
 #ifdef _DEBUG
@@ -181,6 +190,7 @@ void Engine::render()
 	window->clear();
 	gameGrid->draw(*win);
 	pacman->draw(*win);
+	chaseGhost->draw(*win);
 	win->draw(*debugText);
 
 	window->display();
