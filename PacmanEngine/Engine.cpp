@@ -170,6 +170,18 @@ void Engine::fixedUpdate(float dt)
 
 	}
 	
+	 if (input->isKeyDown((int)sf::Keyboard::Key::O))
+	{
+
+		auto ghost = dynamic_cast<Ghost*>(chaseGhost.get());
+		ghost->Scatter();
+
+	}
+	 if (input->isKeyDown((int)sf::Keyboard::Key::I))
+	 {
+		auto ghost = dynamic_cast<Ghost*>(chaseGhost.get());
+		ghost->Aggro(pacman.get());
+	 }
 
 
 
@@ -178,15 +190,12 @@ void Engine::fixedUpdate(float dt)
 		this->gameGrid->gridTileDimensions.x += 10 * dt;
 	else if (input->isKeyDown((int)sf::Keyboard::Key::K))
 		this->gameGrid->gridTileDimensions.y -= 10 * dt;
-	else if (input->isKeyDown((int)sf::Keyboard::Key::I))
-		this->gameGrid->gridTileDimensions.y += 10 * dt;
 	else if (input->isKeyDown((int)sf::Keyboard::Key::L))
 		this->gameGrid->gridTileDimensions.x -= 1 * dt;
 
 	if (input->isKeyDown((int)sf::Keyboard::Key::U))
 		this->gameGrid->tileToSpriteMap.at(GameLevelGrid::TileType::Dot).scale({ 1.1,1.1 });
-	else if (input->isKeyDown((int)sf::Keyboard::Key::O))
-		this->gameGrid->tileToSpriteMap.at(GameLevelGrid::TileType::Dot).scale({ 0.9,0.9 });
+		//this->gameGrid->tileToSpriteMap.at(GameLevelGrid::TileType::Dot).scale({ 0.9,0.9 });
 #endif // _DEBUG
 
 	//Game Collision 

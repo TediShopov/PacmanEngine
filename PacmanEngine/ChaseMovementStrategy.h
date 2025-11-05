@@ -12,9 +12,10 @@ public:
 
     // Inherited via IMovementStrategy
     sf::Vector2i computeDesiredDirection(const GridEntity& self) const override;
+protected:
+    sf::Vector2i computeDesiredDirectionToReach(const GridEntity& self,sf::Vector2i target) const ;
 
 private:
-    bool canTraverseInDirection(const GridEntity& self, sf::Vector2i nextTile,DirectionEnum dir) const ;
     const GridEntity* target;
     mutable sf::Vector2i lastComtutedFor;
 

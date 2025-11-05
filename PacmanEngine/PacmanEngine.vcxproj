@@ -166,6 +166,7 @@
     <ClCompile Include="InputMovementStrategy.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Pacman.cpp" />
+    <ClCompile Include="ScatterMovementStrategy.cpp" />
     <ClCompile Include="WindowSFML.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -181,7 +182,12 @@
     <ClInclude Include="InputMovementStrategy.h" />
     <ClInclude Include="IWindow.h" />
     <ClInclude Include="Pacman.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="ScatterMovementStrategy.h" />
     <ClInclude Include="WindowSFML.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="PacmanEngine.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

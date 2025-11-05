@@ -6,6 +6,11 @@
 
 sf::Vector2i ChaseMovementStrategy::computeDesiredDirection(const GridEntity& self) const
 {
+    return computeDesiredDirectionToReach(self, this->target->gridPosition);
+}
+
+sf::Vector2i ChaseMovementStrategy::computeDesiredDirectionToReach(const GridEntity& self, sf::Vector2i target) const
+{
     auto grid = self.levelGrid;
     auto currentTile = self.gridPosition ;
 
@@ -29,8 +34,8 @@ sf::Vector2i ChaseMovementStrategy::computeDesiredDirection(const GridEntity& se
             sf::Vector2i aTile = self.gridPosition + GameLevelGrid::Directions.at(a);
             sf::Vector2i bTile = self.gridPosition + GameLevelGrid::Directions.at(b);
 
-            int distanceToA = (aTile - target->gridPosition).lengthSquared();
-            int distanceToB = (bTile - target->gridPosition).lengthSquared();
+            int distanceToA = (aTile - target).lengthSquared();
+            int distanceToB = (bTile - target).lengthSquared();
 
             if (distanceToA != distanceToB)
                 return distanceToA < distanceToB;
@@ -38,7 +43,6 @@ sf::Vector2i ChaseMovementStrategy::computeDesiredDirection(const GridEntity& se
                 return a < b; // Converts enum to int and compares; The enum itself encodes the priority for the tiebrake
 
         });
-
 
 
     if (walkableDirections.size() <= 0)
@@ -56,16 +60,4 @@ sf::Vector2i ChaseMovementStrategy::computeDesiredDirection(const GridEntity& se
 
 }
 
-bool ChaseMovementStrategy::canTraverseInDirection(const GridEntity& self, sf::Vector2i nextTile,DirectionEnum dir) const
-{
-    sf::Vector2i dirVecor = GameLevelGrid::Directions.at(dir);
-    auto tileInDir = nextTile + dirVecor;
 
-    auto grid = self.levelGrid;
-    using GT = GameLevelGrid::TileType;
-
-    bool isNotWall = grid->at(tileInDir) != GT::Wall;
-    bool isNotReverseDirection = !GameLevelGrid::areDirectionRevererse(dirVecor, self.currentDirecton);
-
-    return isNotWall && isNotReverseDirection;
-}
