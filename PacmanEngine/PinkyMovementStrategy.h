@@ -5,6 +5,6 @@ class PinkyMovementStrategy :
 {
 public:
 	PinkyMovementStrategy(const GridEntity* target);
-	sf::Vector2i computeDesiredDirection(const GridEntity& self) const override;
+	sf::Vector2i computeDesiredDirection(const GridEntity& self) const final;
 };
 

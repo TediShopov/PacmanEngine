@@ -7,7 +7,7 @@ class FrightenedMovementStrategy :
     
 public:
     // Inherited via IMovementStrategy
-    sf::Vector2i computeDesiredDirection(const GridEntity& self) const override;
+    sf::Vector2i computeDesiredDirection(const GridEntity& self) const final;
 
 private:
     DirectionEnum computeRandomDirection() const; 

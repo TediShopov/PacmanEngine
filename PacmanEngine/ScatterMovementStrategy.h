@@ -7,7 +7,7 @@ public:
     ScatterMovementStrategy(sf::Vector2i target) : ChaseMovementStrategy(nullptr), target(target) {}
 
     // Inherited via IMovementStrategy
-    sf::Vector2i computeDesiredDirection(const GridEntity& self) const override;
+    sf::Vector2i computeDesiredDirection(const GridEntity& self) const final;
 
 private:
     sf::Vector2i target;
