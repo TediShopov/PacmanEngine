@@ -14,20 +14,50 @@
 //		this->desiredDirecton = sf::Vector2i{ 0,1 };
 //}
 
+ GridEntity::GridEntity()
+{
+	//_debugDesiredDirectionTexture = new sf::Texture(sf::Vector2u{ 8, 8 },false);
+	_debugDesiredDirectionTexture = new sf::Texture("../assets/Wall.png");
+	_debugVisualizeDesiredDirection = new sf::Sprite(*_debugDesiredDirectionTexture, sf::IntRect( { 0,0 },{16,16} ));
+	_debugVisualizeDesiredDirection->setOrigin({ 8,8 });
+	_debugVisualizeDesiredDirection->setColor(sf::Color{0,255,0,255});
+	_debugVisualizeDesiredDirection->scale({0.5,0.5});
+
+}
+
+ GridEntity::~GridEntity() 
+ {
+	 delete _debugDesiredDirectionTexture;
+	 delete _debugVisualizeDesiredDirection;
+
+}
+
 void GridEntity::fixedUpdate(float dt)
 {
+	//If desired direction has not been yet computed 
+//	if(desiredDirecton.x == 0 && desiredDirecton.y == 0)
+//		this->desiredDirecton = movementStrategy->computeDesiredDirection(*this);
+
 	this->desiredDirecton = movementStrategy->computeDesiredDirection(*this);
 	//Update this only if possible
-	this->currentDirecton = desiredDirecton;
+	if (canChangeDirection(dt))
+	{
+		this->currentDirecton = desiredDirecton;
+		//this->desiredDirecton = movementStrategy->computeDesiredDirection(*this);
+
+	}
+
+	
+
 	gridPosition = this->levelGrid->getCellCoordinates(worldPos);
 
 	// Get current and next tile types
-	auto currentTile		= this->levelGrid->at(gridPosition.x, gridPosition.y);
-	auto nextTile			= this->levelGrid->at(gridPosition.x + currentDirecton.x, gridPosition.y + currentDirecton.y);
+	auto currentTile		= this->levelGrid->at(gridPosition);
+	auto nextTile			= this->levelGrid->at(gridPosition + currentDirecton);
 
 	// Compute tile centers
-	auto currentTileCenter	= this->levelGrid->getPixelCoordinates(gridPosition.x, gridPosition.y);
-	auto nextTileCenter		= this->levelGrid->getPixelCoordinates(gridPosition.x + currentDirecton.x, gridPosition.y + currentDirecton.y);
+	auto currentTileCenter	= this->levelGrid->getPixelCoordinates(gridPosition);
+	auto nextTileCenter		= this->levelGrid->getPixelCoordinates(gridPosition + currentDirecton);
 
 	const sf::Vector2f step =static_cast<sf::Vector2f>(currentDirecton) * movementSpeed;
 	const sf::Vector2f nextWolrdPos = worldPos + step;
@@ -66,6 +96,44 @@ void GridEntity::draw(sf::RenderWindow& win)
 {
 	this->sprite->setPosition(worldPos);
 	win.draw(*this->sprite);
+
+
+	//Update debug position
+	auto finalPos = (this->worldPos + (sf::Vector2f(this->desiredDirecton).componentWiseMul({15,15})));
+	_debugVisualizeDesiredDirection->setPosition(finalPos);
+	win.draw(*this->_debugVisualizeDesiredDirection);
+
 }
+
+ bool GridEntity::canChangeDirection(float dt) 
+ {
+
+	 //Direction are completely oppositde
+	 if ((desiredDirecton + currentDirecton).lengthSquared() == 0)
+	 {
+		 return true;
+	 }
+	 else 
+	 {
+		 auto nextDesired = gridPosition + desiredDirecton;
+
+		 bool nextIsNotWall = levelGrid->at(nextDesired) != GameLevelGrid::TileType::Wall;
+		 bool approximatelyCloseToCenter = approximatelyNearCenter(2.0f);
+		 //bool approximatelyCloseToCenter =true;
+		 return nextIsNotWall && approximatelyCloseToCenter;
+
+	 }
+
+
+ }
+
+ bool GridEntity::approximatelyNearCenter(float eps)
+ {
+	 sf::Vector2f tileCenter = levelGrid->getPixelCoordinates(this->gridPosition);
+	 sf::Vector2f delta = tileCenter - worldPos;
+	 return std::abs(delta.x) < eps && std::abs(delta.y) < eps;
+
+ }
+
 
 

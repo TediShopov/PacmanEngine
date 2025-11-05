@@ -7,6 +7,7 @@ class ChaseMovementStrategy :
 {
 
 public:
+
     ChaseMovementStrategy(const GridEntity* target) : target(target){}
 
     // Inherited via IMovementStrategy
@@ -15,6 +16,7 @@ public:
 private:
     bool canTraverseInDirection(const GridEntity& self, sf::Vector2i nextTile,DirectionEnum dir) const ;
     const GridEntity* target;
+    mutable sf::Vector2i lastComtutedFor;
 
 };
 

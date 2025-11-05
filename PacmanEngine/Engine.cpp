@@ -26,17 +26,20 @@ Engine::Engine() :
 	initSprites();
 	initGameLevelGrid();
 
+	gameGrid->playerSpawnPoint = { 1,1 };
 	//Init debug grid entity
 	//Pacman p = new Pacman(gameGrid.get(), input.get(), spriteMap.at(PacmanString).get());
 	pacman = std::make_unique<Pacman>(gameGrid.get(), input.get(), spriteMap.at(PacmanString).get());
-	pacman->gridPosition = { 2,2 };
-	pacman->worldPos = gameGrid->getPixelCoordinates(2,2);
-	pacman->movementSpeed = 1;
+
+	pacman->gridPosition = {gameGrid->playerSpawnPoint};
+	pacman->worldPos = gameGrid->getPixelCoordinates(gameGrid->playerSpawnPoint);
+	pacman->movementSpeed = 2;
 
 	chaseGhost = std::make_unique<Ghost>(gameGrid.get(), pacman.get(), spriteMap.at(PacmanString).get());
-	chaseGhost->gridPosition = { 8,8 };
-	chaseGhost->worldPos = gameGrid->getPixelCoordinates(8,8);
-	chaseGhost->movementSpeed = 1;
+	//chaseGhost->desiredDirecton = GameLevelGrid::Directions.at(UP);
+	chaseGhost->gridPosition = {3,30};
+	chaseGhost->worldPos = gameGrid->getPixelCoordinates(chaseGhost->gridPosition);
+	chaseGhost->movementSpeed = 2;
 
 
 }
@@ -57,20 +60,21 @@ void Engine::initGameLevelGrid()
 	auto win = sfmlWindow->raw();
 
 	using TT = GameLevelGrid::TileType;
-	this->gameGrid->loadLevel(
-		{
-			TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,
-			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
-			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
-			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
-			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
-			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
-			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
-			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
-			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
-			TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,
-		}
-	);
+	this->gameGrid->loadLevelCsf("../assets/PacLevel2.csv");
+//	this->gameGrid->loadLevel(
+//		{
+//			TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,
+//			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
+//			TT::Wall,TT::Dot,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Dot,TT::Wall,
+//			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
+//			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
+//			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
+//			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
+//			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
+//			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
+//			TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,
+//		}
+//	);
 
 
 

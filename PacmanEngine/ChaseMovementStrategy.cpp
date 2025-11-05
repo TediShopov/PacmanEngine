@@ -7,14 +7,17 @@
 sf::Vector2i ChaseMovementStrategy::computeDesiredDirection(const GridEntity& self) const
 {
     auto grid = self.levelGrid;
-    auto nextTile = self.gridPosition + self.currentDirecton;
+    auto currentTile = self.gridPosition ;
+
+    if(lastComtutedFor == currentTile)
+        return self.desiredDirecton;
 
     std::vector<DirectionEnum> walkableDirections;
 
     // Filter tiles that are walkable = not a wall
     for (auto& cardinalDirection : GameLevelGrid::Directions)
     {
-        if(canTraverseInDirection(self,nextTile,cardinalDirection.first))
+        if(canTraverseInDirection(self,currentTile,cardinalDirection.first))
 			walkableDirections.push_back(cardinalDirection.first);
 
     }
@@ -36,21 +39,33 @@ sf::Vector2i ChaseMovementStrategy::computeDesiredDirection(const GridEntity& se
 
         });
 
-    if (walkableDirections.size() <= 0)
-        return GameLevelGrid::Directions.at(UP);
 
-    return GameLevelGrid::Directions.at(walkableDirections.front());
+
+    if (walkableDirections.size() <= 0)
+    {
+        lastComtutedFor = currentTile;
+        return self.desiredDirecton;
+
+    }
+    else 
+    {
+        lastComtutedFor = currentTile;
+		return GameLevelGrid::Directions.at(walkableDirections.front());
+    }
+
+
 }
 
 bool ChaseMovementStrategy::canTraverseInDirection(const GridEntity& self, sf::Vector2i nextTile,DirectionEnum dir) const
 {
-    auto tileInDir = nextTile + GameLevelGrid::Directions.at(dir);
+    sf::Vector2i dirVecor = GameLevelGrid::Directions.at(dir);
+    auto tileInDir = nextTile + dirVecor;
 
     auto grid = self.levelGrid;
     using GT = GameLevelGrid::TileType;
 
     bool isNotWall = grid->at(tileInDir) != GT::Wall;
-    return isNotWall;
-	//bool isNotReverseDirection = (Directions.at(dir) + self.currentDirecton).lengthSquared() != 0;
-    //return isNotWall && isNotReverseDirection;
+    bool isNotReverseDirection = !GameLevelGrid::areDirectionRevererse(dirVecor, self.currentDirecton);
+
+    return isNotWall && isNotReverseDirection;
 }
