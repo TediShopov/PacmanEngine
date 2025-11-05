@@ -52,17 +52,21 @@ void Engine::initGameLevelGrid()
 	this->gameGrid->loadLevel(
 		{
 			TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,
-			TT::Wall,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Wall,
-			TT::Wall,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Wall,
-			TT::Wall,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Wall,
-			TT::Wall,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Wall,
-			TT::Wall,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Wall,
-			TT::Wall,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Wall,
-			TT::Wall,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Wall,
-			TT::Wall,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Empty,TT::Wall,
+			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
+			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
+			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
+			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
+			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
+			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
+			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
+			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
 			TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,
 		}
 	);
+
+
+
+
 }
 
 void Engine::initSprites()
@@ -156,6 +160,19 @@ void Engine::fixedUpdate(float dt)
 	else if (input->isKeyDown((int)sf::Keyboard::Key::O))
 		this->gameGrid->tileToSpriteMap.at(GameLevelGrid::TileType::Dot).scale({ 0.9,0.9 });
 #endif // _DEBUG
+
+	//Game Collision 
+	using Tile = GameLevelGrid::TileType;
+	if (gameGrid->at(pacman->gridPosition) == Tile::Dot)
+	{
+		score += ScorePerPellet;
+		gameGrid->set(pacman->gridPosition, Tile::Empty);
+	}
+
+
+
+
+
 }
 
 void Engine::render()
@@ -177,6 +194,7 @@ void Engine::update(float lag)
 	std::string debugString = "";
 	debugString += "Character Pixel Pos X:" + std::to_string(pacman->worldPos.x) + "Y: " + std::to_string(pacman->worldPos.y) + "\n";
 	debugString += "Character Grid Coord X:" + std::to_string(pacman->gridPosition.x) + "Y: " + std::to_string(pacman->gridPosition.y) + "\n";
+	debugString += "SCORE: " + std::to_string(score);
 
 
 	debugText->setPosition(gameGrid->getPixelCoordinates({0,12}));

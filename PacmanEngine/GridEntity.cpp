@@ -66,3 +66,4 @@ void GridEntity::draw(sf::RenderWindow& win)
 	this->sprite->setPosition(worldPos);
 	win.draw(*this->sprite);
 }
+

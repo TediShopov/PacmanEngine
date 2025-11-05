@@ -67,6 +67,20 @@ public:
 			return gridData[getFlatIndex(row, col)];
 		return TileType::Wall;
 	}
+	TileType at(sf::Vector2i i) const
+	{
+		return at(i.x,i.y);
+	}
+	void set(int row, int col, TileType t) 
+	{
+		if (isInRange(row, col))
+			gridData[getFlatIndex(row,col)] = t;
+	}
+	void set(sf::Vector2i i, TileType t) 
+	{
+		return set(i.x, i.y, t);
+	}
+
 
 	constexpr int getFlatIndex(int row, int col) const
 	{

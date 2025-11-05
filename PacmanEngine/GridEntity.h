@@ -24,6 +24,8 @@ public:
 	//The direction that is changed by player input
 	sf::Vector2i desiredDirecton;
 
+
+
 	const GameLevelGrid* levelGrid;
 };
 

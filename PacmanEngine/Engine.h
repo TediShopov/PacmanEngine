@@ -11,6 +11,7 @@ class Engine
 {
 	const std::string DefaultEngineName = "PacmanEngine";
 	const sf::Vector2u DefaultEngineWindowSize = { 448,576 };
+	const uint16_t ScorePerPellet = 10;
 
 public:
 
@@ -40,7 +41,12 @@ private:
 	std::unordered_map<std::string, std::unique_ptr<sf::Sprite>> spriteMap;
 	std::unique_ptr<GameLevelGrid> gameGrid;
 	std::unique_ptr<GridEntity> pacman;
+	std::vector<std::unique_ptr<GridEntity>> ghosts;
 	sf::Font debugFont;
 	sf::Text* debugText;
+
+	uint32_t score;
+
+
 };
 
