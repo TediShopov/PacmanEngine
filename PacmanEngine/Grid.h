@@ -2,6 +2,8 @@
 #include <vector>
 #include <unordered_map>
 #include <SFML/Graphics.hpp>
+#include <fstream>
+#include <sstream>
 
 enum DirectionEnum {
     UP,
@@ -13,12 +15,13 @@ class GameLevelGrid
 {
 
 public:
+	sf::Vector2i playerSpawnPoint;
 
 	inline static const std::unordered_map<DirectionEnum, sf::Vector2i> Directions{
-		{UP, sf::Vector2i(0,-1)},
-		{LEFT, sf::Vector2i(0,1)},
-		{DOWN, sf::Vector2i(-1,0)},
-		{RIGHT, sf::Vector2i(1,0)}
+		{UP,		sf::Vector2i(0,-1)},
+		{LEFT,		sf::Vector2i(-1,0)},
+		{DOWN,		sf::Vector2i(0,1)},
+		{RIGHT,		sf::Vector2i(1,0)}
 	};
 
 	enum class TileType { Empty, Wall, Dot, PowerPill, Door };
@@ -59,6 +62,45 @@ public:
 			this->gridData[i] = tiles[i];
 	}
 
+
+	void loadLevelCsf(std::string fileName)
+	{
+		gridData.clear();
+		//std::vector<std::vector<TileType>> grid;
+
+		std::ifstream file(fileName);
+		std::string line;
+
+		int rows = 0;
+		int cols = 0;
+		while (std::getline(file, line)) {
+			std::stringstream ss(line);
+			std::string token;
+			cols = 0;
+			while (std::getline(ss, token, ',')) {
+
+				if (token == "W") gridData.push_back(TileType::Wall);
+				else if (token == ".") gridData.push_back(TileType::Dot);
+				else if (token == "o") gridData.push_back(TileType::PowerPill);
+				else if (token == "P")
+				{
+					gridData.push_back(TileType::Empty);
+					this->playerSpawnPoint = { cols,rows };
+
+				}
+//				else if (token == "G") row.push_back(TileType::GhostGate);
+//				else if (token == "H") row.push_back(TileType::GhostHouse);
+				//else if (token == "P") gridData.push_back(TIle)
+				else gridData.push_back(TileType::Empty);
+				cols++;
+			}
+			rows++;
+		}
+		this->cols = cols;
+		this->rows = rows;
+	}
+
+
 	void setPosition(sf::Vector2f pos)
 	{
 		this->Position = pos;
@@ -83,7 +125,7 @@ public:
 	}
 	TileType at(sf::Vector2i i) const
 	{
-		return at(i.x, i.y);
+		return at(i.y, i.x);
 	}
 	void set(int row, int col, TileType t)
 	{
@@ -92,7 +134,19 @@ public:
 	}
 	void set(sf::Vector2i i, TileType t)
 	{
-		return set(i.x, i.y, t);
+		return set(i.y, i.x, t);
+	}
+
+
+	static bool areDirectionRevererse(sf::Vector2i a, sf::Vector2i b) 
+	{
+		auto result = a + b;
+		return result.x == 0 && result.y == 0;
+	}
+	static bool areDirectionRevererse(DirectionEnum a, DirectionEnum b)
+	{
+		auto result = Directions.at(a) + Directions.at(b);
+		return result.x == 0 && result.y == 0;
 	}
 
 
@@ -104,13 +158,11 @@ public:
 	//Return the center of the tile in pixel coordinates
 	constexpr sf::Vector2f getPixelCoordinates(int row, int col) const
 	{
-
-		return { Position.x + (float)row * gridTileDimensions.y + gridTileDimensions.y / 2,Position.y + (float)col * gridTileDimensions.x + gridTileDimensions.x / 2 };
-
+		return { Position.x + (float)col * gridTileDimensions.x + gridTileDimensions.x / 2 ,Position.y + (float)row * gridTileDimensions.y + gridTileDimensions.y / 2};
 	}
 	constexpr sf::Vector2f getPixelCoordinates(sf::Vector2i pos) const
 	{
-		return getPixelCoordinates(pos.x, pos.y);
+		return getPixelCoordinates(pos.y, pos.x);
 
 	}
 	constexpr sf::Vector2i getCellCoordinates(float pixelX, float pixelY) const
