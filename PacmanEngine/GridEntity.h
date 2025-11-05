@@ -1,18 +1,21 @@
 #pragma once
 #include "SFML/Graphics.hpp"
-
-
+#include "IMovementStrategy.h"
 
 class IInput;
 class GameLevelGrid;
+
 class GridEntity
 {
 public:
+	~GridEntity() {};
 
-	void updateInput(const IInput* input);
-	void fixedUpdate(float dt);
-	void update(float lag);
-	void draw(sf::RenderWindow& win);
+	//virtual void updateInput(const IInput* input);
+	virtual void fixedUpdate(float dt);
+	virtual void update(float lag);
+	virtual void draw(sf::RenderWindow& win);
+
+
 
 //private:
 	float movementSpeed;
@@ -24,8 +27,8 @@ public:
 	//The direction that is changed by player input
 	sf::Vector2i desiredDirecton;
 
-
-
 	const GameLevelGrid* levelGrid;
+protected:
+	std::unique_ptr<IMovementStrategy> movementStrategy;
 };
 

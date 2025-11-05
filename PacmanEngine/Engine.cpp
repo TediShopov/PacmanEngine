@@ -1,10 +1,11 @@
 #include "Engine.h"
 #include "chrono"
+#include "Pacman.h"
 
 //A quick and dirty way to reference textures and sprites
 const std::string BigCoin = "BigCoin";
 const std::string Wall = "Wall";
-const std::string Pacman = "Pacman";
+const std::string PacmanString = "Pacman";
 
 //Game configurable properties
 const sf::Vector2i PacTileSetSpriteDimensions{ 16,16 };
@@ -25,11 +26,10 @@ Engine::Engine() :
 	initGameLevelGrid();
 
 	//Init debug grid entity
-	pacman = std::make_unique<GridEntity>();
-	pacman->levelGrid = this->gameGrid.get();
-	pacman->worldPos = gameGrid->getPixelCoordinates(2, 2);
-	pacman->gridPosition = { 0,0 };
-	pacman->sprite = spriteMap.at(Pacman).get();
+	//Pacman p = new Pacman(gameGrid.get(), input.get(), spriteMap.at(PacmanString).get());
+	pacman = std::make_unique<Pacman>(gameGrid.get(), input.get(), spriteMap.at(PacmanString).get());
+	pacman->gridPosition = { 2,2 };
+	pacman->worldPos = gameGrid->getPixelCoordinates(2,2);
 	pacman->movementSpeed = 1;
 }
 
@@ -88,11 +88,11 @@ void Engine::initSprites()
 	//pacmanSprite->setScale({0.9f,0.9f});
 	//pacmanSprite->setScale({2.f,2.f});
 	pacmanSprite->setOrigin({8,8});
-	pacmanSprite->setTexture(*textureMap.at(Pacman));
+	pacmanSprite->setTexture(*textureMap.at(PacmanString));
 
 	this->spriteMap.insert({ BigCoin, std::move(defSprite) });
 	this->spriteMap.insert({ Wall, std::move(wallSprite) });
-	this->spriteMap.insert({ Pacman, std::move(pacmanSprite) });
+	this->spriteMap.insert({ PacmanString, std::move(pacmanSprite) });
 }
 
 void Engine::initTextures()
@@ -104,7 +104,7 @@ void Engine::initTextures()
 
 	this->textureMap.insert({ BigCoin,std::move(defTexture) });
 	this->textureMap.insert({ Wall,std::move(wallTexture) });
-	this->textureMap.insert({ Pacman,std::move(pacmanTexture) });
+	this->textureMap.insert({ PacmanString,std::move(pacmanTexture) });
 }
 
 int Engine::run()
@@ -141,7 +141,6 @@ int Engine::run()
 
 void Engine::fixedUpdate(float dt)
 {
-	pacman->updateInput(input.get());
 	pacman->fixedUpdate(dt);
 	input->update(dt);
 	//Debug Control Game Level Grid

@@ -2,20 +2,21 @@
 #include "IInput.h"
 #include "Grid.h"
 
-void GridEntity::updateInput(const IInput* input)
-{
-	if (input->isKeyDown((int)sf::Keyboard::Key::A))
-		this->desiredDirecton = sf::Vector2i{ -1,0 };
-	else if (input->isKeyDown((int)sf::Keyboard::Key::D))
-		this->desiredDirecton = sf::Vector2i{ 1,0 };
-	else if (input->isKeyDown((int)sf::Keyboard::Key::W))
-		this->desiredDirecton = sf::Vector2i{ 0,-1 };
-	else if (input->isKeyDown((int)sf::Keyboard::Key::S))
-		this->desiredDirecton = sf::Vector2i{ 0,1 };
-}
+//void GridEntity::updateInput(const IInput* input)
+//{
+//	if (input->isKeyDown((int)sf::Keyboard::Key::A))
+//		this->desiredDirecton = sf::Vector2i{ -1,0 };
+//	else if (input->isKeyDown((int)sf::Keyboard::Key::D))
+//		this->desiredDirecton = sf::Vector2i{ 1,0 };
+//	else if (input->isKeyDown((int)sf::Keyboard::Key::W))
+//		this->desiredDirecton = sf::Vector2i{ 0,-1 };
+//	else if (input->isKeyDown((int)sf::Keyboard::Key::S))
+//		this->desiredDirecton = sf::Vector2i{ 0,1 };
+//}
 
 void GridEntity::fixedUpdate(float dt)
 {
+	this->desiredDirecton = movementStrategy->computeDesiredDirection(*this);
 	//Update this only if possible
 	this->currentDirecton = desiredDirecton;
 	gridPosition = this->levelGrid->getCellCoordinates(worldPos);
@@ -66,4 +67,5 @@ void GridEntity::draw(sf::RenderWindow& win)
 	this->sprite->setPosition(worldPos);
 	win.draw(*this->sprite);
 }
+
 
