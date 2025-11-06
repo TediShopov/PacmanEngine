@@ -4,7 +4,7 @@
 #include "FrightenedMovementStrategy.h"
 #include "ScatterMovementStrategy.h"
 enum GhostState {
-	Chase, Frightened, Scatter
+	Chase, Frightened, scatter, dead
 
  };
 
@@ -20,7 +20,7 @@ public:
 	}
 
 	//Changes the state to frightened. This involved changing the movement strategy, color and speed
-	void Frighten()
+	void frighten()
 	{
 		if (state == GhostState::Frightened)
 			return;
@@ -33,7 +33,7 @@ public:
 	}
 
 	//Changes the state to frightened. This involved changing the movement strategy, color and speed
-	void Aggro(const GridEntity* target)
+	void aggro(const GridEntity* target)
 	{
 		if (state == GhostState::Chase)
 			return;
@@ -46,18 +46,31 @@ public:
 
 
 	//Changes the state to frightened. This involved changing the movement strategy, color and speed
-	void Scatter()
+	void scatter()
 	{
-		if (state == GhostState::Scatter)
+		if (state == GhostState::scatter)
 			return;
-		state = GhostState::Scatter;
+		state = GhostState::scatter;
 		this->movementStrategy = std::make_unique<ScatterMovementStrategy>(scatterTile);
 		this->sprite->setColor({255,0,0,255});
 		this->movementSpeed = 2;
 		//this->desiredDirecton = this->desiredDirecton;
 	}
-private:
+
+	//Changes the state to frightened. This involved changing the movement strategy, color and speed
+	void dead()
+	{
+		if (state == GhostState::dead)
+			return;
+		state = GhostState::dead;
+		this->movementStrategy = std::make_unique<ScatterMovementStrategy>(respawnTile);
+		this->sprite->setColor({255,0,255,255});
+		this->movementSpeed = 2;
+		//this->desiredDirecton = this->desiredDirecton;
+	}
+
 	GhostState state;
 	sf::Vector2i scatterTile;
+	sf::Vector2i respawnTile;
 };
 

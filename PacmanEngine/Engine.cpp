@@ -61,24 +61,6 @@ void Engine::initGameLevelGrid()
 
 	using TT = GameLevelGrid::TileType;
 	this->gameGrid->loadLevelCsf("../assets/PacLevel2.csv");
-//	this->gameGrid->loadLevel(
-//		{
-//			TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,
-//			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
-//			TT::Wall,TT::Dot,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Dot,TT::Wall,
-//			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
-//			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
-//			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
-//			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
-//			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
-//			TT::Wall,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Dot,TT::Wall,
-//			TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,TT::Wall,
-//		}
-//	);
-
-
-
-
 }
 
 void Engine::initSprites()
