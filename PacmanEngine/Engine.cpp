@@ -36,6 +36,8 @@ Engine::Engine() :
 	pacman->movementSpeed = 2;
 
 	chaseGhost = std::make_unique<Ghost>(gameGrid.get(), pacman.get(), spriteMap.at(PacmanString).get());
+	auto ghost = dynamic_cast<Ghost*>(chaseGhost.get());
+	ghost->respawnTile = gameGrid->getGridDimensions() / 2;
 	//chaseGhost->desiredDirecton = GameLevelGrid::Directions.at(UP);
 	chaseGhost->gridPosition = {3,30};
 	chaseGhost->worldPos = gameGrid->getPixelCoordinates(chaseGhost->gridPosition);
@@ -145,27 +147,16 @@ void Engine::fixedUpdate(float dt)
 	//Debug Control Game Level Grid
 #ifdef _DEBUG
 
+	auto ghost = dynamic_cast<Ghost*>(chaseGhost.get());
+
 	if (input->isKeyDown((int)sf::Keyboard::Key::P))
-	{
-		auto ghost = dynamic_cast<Ghost*>(chaseGhost.get());
-		ghost->Frighten();
-
-	}
-	
-	 if (input->isKeyDown((int)sf::Keyboard::Key::O))
-	{
-
-		auto ghost = dynamic_cast<Ghost*>(chaseGhost.get());
-		ghost->Scatter();
-
-	}
-	 if (input->isKeyDown((int)sf::Keyboard::Key::I))
-	 {
-		auto ghost = dynamic_cast<Ghost*>(chaseGhost.get());
-		ghost->Aggro(pacman.get());
-	 }
-
-
+		ghost->changeState(Frightened);
+	else if (input->isKeyDown((int)sf::Keyboard::Key::O))
+		ghost->changeState(Scatter);
+	else if (input->isKeyDown((int)sf::Keyboard::Key::I))
+		ghost->changeState(Chase);
+	else if (input->isKeyDown((int)sf::Keyboard::Key::U))
+		ghost->changeState(Dead);
 
 
 	if (input->isKeyDown((int)sf::Keyboard::Key::J))
@@ -175,18 +166,50 @@ void Engine::fixedUpdate(float dt)
 	else if (input->isKeyDown((int)sf::Keyboard::Key::L))
 		this->gameGrid->gridTileDimensions.x -= 1 * dt;
 
-	if (input->isKeyDown((int)sf::Keyboard::Key::U))
-		this->gameGrid->tileToSpriteMap.at(GameLevelGrid::TileType::Dot).scale({ 1.1,1.1 });
 		//this->gameGrid->tileToSpriteMap.at(GameLevelGrid::TileType::Dot).scale({ 0.9,0.9 });
 #endif // _DEBUG
 
 	//Game Collision 
 	using Tile = GameLevelGrid::TileType;
+
+	//Game Grid- Pacman Collision
 	if (gameGrid->at(pacman->gridPosition) == Tile::Dot)
 	{
 		score += ScorePerPellet;
 		gameGrid->set(pacman->gridPosition, Tile::Empty);
 	}
+	if (gameGrid->at(pacman->gridPosition) == Tile::PowerPill)
+	{
+		//score += ScorePerPellet;
+		//gameGrid->set(pacman->gridPosition, Tile::Empty);
+		//frigthen ghost
+		ghost->changeState(Frightened);
+		//lock state for specific game time ? 
+	}
+
+
+	//Game Grid - Ghost collision
+	if (ghost->getState() == Dead && ghost->gridPosition == ghost->getRespawnTile())
+	{
+		//The ghost might enter scatter mode depening on timer ? 
+		ghost->changeState(Chase);
+		//ghost->changeState(Scatter);
+
+	}
+
+	//Pacman-ghost collision
+	if (pacman->gridPosition == ghost->gridPosition)
+	{
+		//If ghost frightened pacman eats ghost
+		if (ghost->getState() == Frightened)
+		{
+			ghost->changeState(Dead);
+			//Get points
+			score += ScorePerGhost;
+		}
+
+	}
+	
 
 
 

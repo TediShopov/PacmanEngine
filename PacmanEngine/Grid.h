@@ -175,6 +175,14 @@ public:
 	{
 		return getCellCoordinates(position.x, position.y);
 	}
+
+	constexpr sf::Vector2i getGridDimensions()
+	{
+		return sf::Vector2i{ cols,rows };
+	}
+
+
+
 private:
 	//Represent the top-left cornect of the grid
 	sf::Vector2f Position;
