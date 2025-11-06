@@ -95,7 +95,7 @@ void Engine::initGhosts(const sf::Vector2i& defaultGhostSpawnPoint)
 	clyde->sprite = spriteMap.at(ClydeString).get();
 	clyde->setChaseStrategy(Clyde); 
 	clyde->ally = blinky.get();
-	clyde->scatterTile = { 0, gridDim.y}; // Clyde's scatter tile is at the bottom right
+	clyde->scatterTile = { 0, gridDim.y+5}; // Clyde's scatter tile is at the bottom right
 	clyde->gridPosition = clyde->respawnTile;
 	clyde->worldPos = gameGrid->getPixelCoordinates(pinky->gridPosition);
 
@@ -276,13 +276,20 @@ void Engine::fixedUpdate(float dt)
 		auto ghost = dynamic_cast<Ghost*>(g.get());
 		if (ghost->getState() == Dead && ghost->gridPosition == ghost->getRespawnTile() && ghost->approximatelyNearCenter(2.0f))
 		{
+			//The ghost might enter scatter mode depening on timer ? 
+			ghost->changeState(Spawning);
+			
 			ghost->desiredDirecton = GameLevelGrid::Directions.at(UP);
 			ghost->currentDirecton = GameLevelGrid::Directions.at(UP);
-			//The ghost might enter scatter mode depening on timer ? 
-			ghost->changeState(Chase);
+			//ghost->changeState(Chase);
 			//ghost->changeState(Scatter);
 
 		}
+		if (ghost->getState() == Spawning && ghost->gridPosition==gameGrid->ghostHouseExit && ghost->approximatelyNearCenter(2.0f))
+		{
+			ghost->changeState(Chase);
+		}
+
 
 		//Pacman-ghost collision
 		if (pacman->gridPosition == ghost->gridPosition)

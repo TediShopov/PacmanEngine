@@ -20,6 +20,7 @@ public:
 	sf::Vector2i clydeSpawnPoint;
 	sf::Vector2i pinkySpawnPoint;
 	sf::Vector2i ghostHouseEntrance;
+	sf::Vector2i ghostHouseExit;
 	sf::Vector2i playerSpawnPoint;
 
 	inline static const std::unordered_map<DirectionEnum, sf::Vector2i> Directions{
@@ -128,6 +129,7 @@ public:
 				{
 					gridData.push_back(TileType::Empty);
 					this->blinkySpawnPoint = { cols,rows };
+					this->ghostHouseExit = { cols,rows };
 				}
 				else if (token == "C")
 				{

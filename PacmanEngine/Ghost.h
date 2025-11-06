@@ -6,11 +6,11 @@
 
 
 enum GhostStateEnum {
-	Chase, Frightened, Scatter, Dead
+	Chase, Frightened, Scatter, Dead, Spawning
 
  };
 enum GhostMovementEnum {
-	Blinky, Inky, Pinky, Clyde, Retreat, Flee, Respawn
+	Blinky, Inky, Pinky, Clyde, Retreat, Flee, Respawn, ExitGhostHouse
  };
 
 struct GhostState 
@@ -49,6 +49,7 @@ public:
 		this->target = other.target;
 		this->respawnTile = other.respawnTile;
 		this->scatterTile = other.scatterTile;
+		this->applyState(state);
 		return *this;
 
 	}
@@ -81,6 +82,7 @@ private:
 	 std::unordered_map<GhostStateEnum, GhostState> stateMap =
 	{
 		{GhostStateEnum::Chase,			GhostState { GhostMovementEnum::Blinky,2,sf::Color{255,255,255,255} }},
+		{GhostStateEnum::Spawning,			GhostState { GhostMovementEnum::ExitGhostHouse,0.5,sf::Color{255,0,0,255} }},
 		{GhostStateEnum::Scatter,		GhostState { GhostMovementEnum::Retreat,2,sf::Color{255,255,255,255} }},
 		//{GhostStateEnum::Frightened,	GhostState { GhostMovementEnum::Flee,1.5,sf::Color{0,0,1,255} }},
 		{GhostStateEnum::Frightened,	GhostState { GhostMovementEnum::Flee,0.1f,sf::Color{0,0,255,255} }},

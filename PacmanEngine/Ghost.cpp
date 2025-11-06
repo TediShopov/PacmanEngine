@@ -8,7 +8,7 @@ Ghost::Ghost(
 	sf::Sprite* sprite,
 	const GridEntity* target,
 	GhostMovementEnum prefferecChase) :
-GridEntity(), target(target), state(Chase), prefferedChaseStrategy(Blinky),
+GridEntity(), target(target), state(Spawning), prefferedChaseStrategy(Blinky),
 respawnTile(sf::Vector2i{0,0}), scatterTile(sf::Vector2i{0,0}), ally(nullptr)
 
 	{
@@ -66,6 +66,9 @@ std::unique_ptr<IMovementStrategy> Ghost::createMovementStrategy(GhostMovementEn
 		break;
 	case Respawn:
 		return std::make_unique<ScatterMovementStrategy>(this->respawnTile);
+		break;
+	case ExitGhostHouse:
+		return std::make_unique<ScatterMovementStrategy>(this->levelGrid->ghostHouseExit);
 		break;
 	default:
 		break;
