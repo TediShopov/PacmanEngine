@@ -46,7 +46,7 @@ Engine::Engine() :
 
 	//Create Ghosts
 	//Blinky
-	initGhosts(defaultGhostSpawnPoint);
+	//initGhosts(defaultGhostSpawnPoint);
 	//pinky = std::make_unique<Ghost>(*blinky);
 	//pinky->setChaseStrategy(Pinky);
 
@@ -121,7 +121,7 @@ void Engine::initGameLevelGrid()
 	auto win = sfmlWindow->raw();
 
 	using TT = GameLevelGrid::TileType;
-	this->gameGrid->loadLevelCsf("../assets/PacLevel2.csv");
+	this->gameGrid->loadLevelCsf("../assets/PacLevel3.csv");
 }
 
 void Engine::initSprites()

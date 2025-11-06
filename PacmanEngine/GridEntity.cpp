@@ -34,22 +34,22 @@
 
 void GridEntity::fixedUpdate(float dt)
 {
-	//If desired direction has not been yet computed 
-//	if(desiredDirecton.x == 0 && desiredDirecton.y == 0)
-//		this->desiredDirecton = movementStrategy->computeDesiredDirection(*this);
-
 	this->desiredDirecton = movementStrategy->computeDesiredDirection(*this);
+
 	//Update this only if possible
 	if (canChangeDirection(dt))
-	{
 		this->currentDirecton = desiredDirecton;
-		//this->desiredDirecton = movementStrategy->computeDesiredDirection(*this);
-
-	}
 
 	
 
 	gridPosition = this->levelGrid->getCellCoordinates(worldPos);
+	if (levelGrid->isInRange(gridPosition.y, gridPosition.x) == false)
+	{
+		//Teleport world postion and recalculate grid position
+		worldPos = levelGrid->computeTeleportedPixelPosition(worldPos);
+		gridPosition = this->levelGrid->getCellCoordinates(worldPos);
+	}
+
 
 	// Get current and next tile types
 	auto currentTile		= this->levelGrid->at(gridPosition);

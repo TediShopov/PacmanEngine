@@ -54,6 +54,28 @@ public:
 		}
 	}
 
+	sf::Vector2f computeTeleportedPixelPosition(sf::Vector2f pixelPos) const
+	{
+		sf::Vector2f gridDimensions = { cols * gridTileDimensions.x + gridTileDimensions.x/2,rows * gridTileDimensions.y + gridTileDimensions.y/2};
+		sf::Vector2f relativePosition = pixelPos - this->Position;
+
+		//Teleport X
+		if (relativePosition.x <= 0)
+			relativePosition.x = gridDimensions.x + relativePosition.x;
+
+		if (relativePosition.x > gridDimensions.x)
+			relativePosition.x = -relativePosition.x;
+
+		//Teleport Y
+		if (relativePosition.y <= 0)
+			relativePosition.y = gridDimensions.y + relativePosition.y;
+
+		if (relativePosition.y > gridDimensions.y)
+			relativePosition.y = -relativePosition.y;
+
+		return this->Position + relativePosition;
+	}
+
 	void loadLevel(std::vector<TileType> tiles)
 	{
 		this->gridData.clear();
@@ -121,7 +143,7 @@ public:
 	{
 		if (isInRange(row, col))
 			return gridData[getFlatIndex(row, col)];
-		return TileType::Wall;
+		return TileType::Empty;
 	}
 	TileType at(sf::Vector2i i) const
 	{
