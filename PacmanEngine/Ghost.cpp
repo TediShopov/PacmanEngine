@@ -12,7 +12,7 @@ Ghost::Ghost(
 	sf::Vector2i scatter
 ) :
 	GridEntity(), target(target), state(Chase), prefferedChaseStrategy(Blinky),
-	respawnTile(respawn), scatterTile(scatter)
+	respawnTile(respawn), scatterTile(scatter), ally(ally)
 	{
 		stateMap.at(Chase).movementStrategy = prefferedChaseStrategy;
 		this->movementStrategy = std::make_unique<ChaseMovementStrategy>(target);
@@ -48,8 +48,7 @@ std::unique_ptr<IMovementStrategy> Ghost::createMovementStrategy(GhostMovementEn
 		return std::make_unique<ChaseMovementStrategy>(target);
 		break;
 	case Inky:
-		return std::make_unique<ChaseMovementStrategy>(target);
-		//return std::make_unique<InkyMovementStrategy>(target);
+		return std::make_unique<InkyMovementStrategy>(target, ally);
 		break;
 	case Pinky:
 		return std::make_unique<PinkyMovementStrategy>(target);

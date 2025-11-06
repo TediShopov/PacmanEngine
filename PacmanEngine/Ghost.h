@@ -50,6 +50,7 @@ private:
 		{GhostStateEnum::Dead,			GhostState { GhostMovementEnum::Respawn,3.5,sf::Color{255,255,255,20} }}
 	};
 	const GridEntity* target;
+	const GridEntity* ally;
 	GhostStateEnum state;
 	GhostMovementEnum prefferedChaseStrategy;
 	sf::Vector2i scatterTile;
