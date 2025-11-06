@@ -5,6 +5,7 @@
 #include "Input.h"
 #include "Grid.h"
 #include "GridEntity.h"
+#include "Timer.h"
 
 class Ghost;
 
@@ -42,6 +43,11 @@ public:
 
 	void changeAllGhostsState(int state);
 
+	void eatPill();
+	//Reverts specific ghosts to chase/scatter mode after frigtened state
+	//duration has been exhausted
+	void revertToChaseAfterFrightened(Timer* t);
+
 private:
 	std::unordered_map<std::string, std::unique_ptr<sf::Texture>> textureMap;
 	std::unordered_map<std::string, std::unique_ptr<sf::Sprite>> spriteMap;
@@ -53,6 +59,9 @@ private:
 	//std::vector<std::unique_ptr<GridEntity>> ghosts;
 	sf::Font debugFont;
 	sf::Text* debugText;
+
+
+	Timer frightenedTimer;
 
 	uint32_t score;
 

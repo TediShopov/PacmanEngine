@@ -26,6 +26,9 @@ Engine::Engine() :
 	this->debugText = new sf::Text(this->debugFont);
 
 
+	frightenedTimer = Timer(1.0);
+	frightenedTimer.onTimerFinished([&](Timer* t) {this->revertToChaseAfterFrightened(t); });
+
 	initTextures();
 	initSprites();
 	initGameLevelGrid();
@@ -216,6 +219,7 @@ int Engine::run()
 void Engine::fixedUpdate(float dt)
 {
 
+	frightenedTimer.update(dt);
 
 
 
@@ -228,7 +232,7 @@ void Engine::fixedUpdate(float dt)
 
 
 	if (input->isKeyDown((int)sf::Keyboard::Key::P))
-		changeAllGhostsState(Frightened);
+		eatPill();
 	else if (input->isKeyDown((int)sf::Keyboard::Key::O))
 		changeAllGhostsState(Scatter);
 	else if (input->isKeyDown((int)sf::Keyboard::Key::I))
@@ -325,6 +329,18 @@ void Engine::render()
 	 }
 
 }
+
+void Engine::eatPill() 
+{
+	changeAllGhostsState(Frightened);
+	frightenedTimer.reset();
+	frightenedTimer.resume();
+}
+
+ void Engine::revertToChaseAfterFrightened(Timer* t)
+ {
+	 changeAllGhostsState(Chase);
+ }
 
 void Engine::update(float lag)
 {

@@ -170,6 +170,7 @@
     <ClCompile Include="Pacman.cpp" />
     <ClCompile Include="PinkyMovementStrategy.cpp" />
     <ClCompile Include="ScatterMovementStrategy.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="WindowSFML.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -190,6 +191,7 @@
     <ClInclude Include="PinkyMovementStrategy.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ScatterMovementStrategy.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="WindowSFML.h" />
   </ItemGroup>
   <ItemGroup>
