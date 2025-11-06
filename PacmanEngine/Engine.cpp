@@ -7,6 +7,10 @@
 const std::string BigCoin = "BigCoin";
 const std::string Wall = "Wall";
 const std::string PacmanString = "Pacman";
+const std::string BlinkyString = "Blinky";
+const std::string InkyString= "Inky";
+const std::string ClydeString = "Clyde";
+const std::string PinkyString = "Pinky";
 
 //Game configurable properties
 const sf::Vector2i PacTileSetSpriteDimensions{ 16,16 };
@@ -35,15 +39,67 @@ Engine::Engine() :
 	pacman->worldPos = gameGrid->getPixelCoordinates(gameGrid->playerSpawnPoint);
 	pacman->movementSpeed = 2;
 
-	chaseGhost = std::make_unique<Ghost>(gameGrid.get(), pacman.get(), spriteMap.at(PacmanString).get());
-	auto ghost = dynamic_cast<Ghost*>(chaseGhost.get());
-	ghost->respawnTile = gameGrid->getGridDimensions() / 2;
-	//chaseGhost->desiredDirecton = GameLevelGrid::Directions.at(UP);
-	chaseGhost->gridPosition = {3,30};
-	chaseGhost->worldPos = gameGrid->getPixelCoordinates(chaseGhost->gridPosition);
-	chaseGhost->movementSpeed = 2;
+	const sf::Vector2i defaultGhostSpawnPoint = { 15,15 };
+
+	//Create Ghosts
+	//Blinky
+	initGhosts(defaultGhostSpawnPoint);
+	//pinky = std::make_unique<Ghost>(*blinky);
+	//pinky->setChaseStrategy(Pinky);
+
+	//pinky = std::make_unique<Ghost>(*blinky);
+	//pinky->setChaseStrategy(Pinky);
 
 
+
+}
+
+void Engine::initGhosts(const sf::Vector2i& defaultGhostSpawnPoint)
+{
+
+	auto blinky = std::make_unique<Ghost>(
+		gameGrid.get(),
+		spriteMap.at(PacmanString).get(),
+		pacman.get(),
+		Blinky
+	);
+	auto gridDim = gameGrid->getGridDimensions();
+	blinky->sprite = spriteMap.at(BlinkyString).get();
+
+	blinky->respawnTile = sf::Vector2i(gameGrid->getGridDimensions() / 2);
+	blinky->scatterTile = {gridDim.x, 0}; // Blinky scatter tile is top-right
+
+	blinky->gridPosition = { defaultGhostSpawnPoint };
+	blinky->worldPos = gameGrid->getPixelCoordinates(blinky->gridPosition);
+
+	auto pinky = std::make_unique<Ghost>(*blinky);
+	pinky->sprite = spriteMap.at(PinkyString).get();
+	pinky->scatterTile = { 2, 0 }; // Pinky's scatter tile is on the top-left
+	pinky->setChaseStrategy(Pinky);
+	pinky->gridPosition = defaultGhostSpawnPoint + sf::Vector2i{ 2, 2 };
+	pinky->worldPos = gameGrid->getPixelCoordinates(pinky->gridPosition);
+
+	auto inky = std::make_unique<Ghost>(*blinky);
+	inky->sprite = spriteMap.at(InkyString).get();
+	inky->ally = blinky.get();
+	inky->scatterTile = { gridDim.x, gridDim.y}; // Pinky's scatter tile is on the bottom-right
+	inky->setChaseStrategy(Inky);
+	inky->gridPosition = defaultGhostSpawnPoint + sf::Vector2i{ 2, 2 };
+	inky->worldPos = gameGrid->getPixelCoordinates(pinky->gridPosition);
+
+	auto clyde = std::make_unique<Ghost>(*blinky);
+	clyde->sprite = spriteMap.at(ClydeString).get();
+	clyde->setChaseStrategy(Clyde); 
+	clyde->ally = blinky.get();
+
+	clyde->scatterTile = { 0, gridDim.y}; // Clyde's scatter tile is at the bottom right
+	clyde->gridPosition = defaultGhostSpawnPoint + sf::Vector2i{ 2, 2 };
+	clyde->worldPos = gameGrid->getPixelCoordinates(pinky->gridPosition);
+
+	ghosts.push_back(std::move(blinky));
+	ghosts.push_back(std::move(pinky));
+	ghosts.push_back(std::move(inky));
+	//ghosts.push_back(std::move(clyde));
 }
 
 void Engine::initGameLevelGrid()
@@ -81,14 +137,28 @@ void Engine::initSprites()
 
 	//Create Pacman Sprite
 	auto pacmanSprite = std::make_unique<sf::Sprite>(*defSprite.get());
-	//pacmanSprite->setScale({0.9f,0.9f});
-	//pacmanSprite->setScale({2.f,2.f});
 	pacmanSprite->setOrigin({8,8});
 	pacmanSprite->setTexture(*textureMap.at(PacmanString));
+
+	auto blinkySprite = std::make_unique<sf::Sprite>(*pacmanSprite);
+	blinkySprite->setTexture(*textureMap.at(BlinkyString));
+
+	auto inkySprite = std::make_unique<sf::Sprite>(*pacmanSprite);
+	inkySprite->setTexture(*textureMap.at(InkyString));
+
+	auto pinkySprite = std::make_unique<sf::Sprite>(*pacmanSprite);
+	pinkySprite->setTexture(*textureMap.at(PinkyString));
+
+	auto clydeSpreit =  std::make_unique<sf::Sprite>(*pacmanSprite);
+	clydeSpreit->setTexture(*textureMap.at(ClydeString));
 
 	this->spriteMap.insert({ BigCoin, std::move(defSprite) });
 	this->spriteMap.insert({ Wall, std::move(wallSprite) });
 	this->spriteMap.insert({ PacmanString, std::move(pacmanSprite) });
+	this->spriteMap.insert({ BlinkyString, std::move(blinkySprite) });
+	this->spriteMap.insert({ ClydeString, std::move(clydeSpreit) });
+	this->spriteMap.insert({ InkyString, std::move(inkySprite) });
+	this->spriteMap.insert({ PinkyString, std::move(pinkySprite) });
 }
 
 void Engine::initTextures()
@@ -97,10 +167,18 @@ void Engine::initTextures()
 	//std::unique_ptr<sf::Texture> wallTexture = std::make_unique<sf::Texture>(sf::Vector2u{ 16,16 }, false);
 	std::unique_ptr<sf::Texture> wallTexture = std::make_unique<sf::Texture>("../assets/Wall.png");
 	std::unique_ptr<sf::Texture> pacmanTexture = std::make_unique<sf::Texture>("../assets/PacMan.png");
+	std::unique_ptr<sf::Texture> bTexture = std::make_unique<sf::Texture>("../assets/redGhost.png");
+	std::unique_ptr<sf::Texture> pTexture = std::make_unique<sf::Texture>("../assets/orangeGhost.png");
+	std::unique_ptr<sf::Texture> iTexture = std::make_unique<sf::Texture>("../assets/blueGhost.png");
+	std::unique_ptr<sf::Texture> cTextreu = std::make_unique<sf::Texture>("../assets/yellowGhost.png");
 
 	this->textureMap.insert({ BigCoin,std::move(defTexture) });
 	this->textureMap.insert({ Wall,std::move(wallTexture) });
 	this->textureMap.insert({ PacmanString,std::move(pacmanTexture) });
+	this->textureMap.insert({ BlinkyString,std::move(bTexture) });
+	this->textureMap.insert({ PinkyString,std::move(pTexture) });
+	this->textureMap.insert({ InkyString,std::move(iTexture) });
+	this->textureMap.insert({ ClydeString,std::move(cTextreu) });
 }
 
 int Engine::run()
@@ -142,21 +220,21 @@ void Engine::fixedUpdate(float dt)
 
 
 	pacman->fixedUpdate(dt);
-	chaseGhost->fixedUpdate(dt);
+	for (auto& g : this->ghosts)
+		g->fixedUpdate(dt);
 	input->update(dt);
 	//Debug Control Game Level Grid
 #ifdef _DEBUG
 
-	auto ghost = dynamic_cast<Ghost*>(chaseGhost.get());
 
 	if (input->isKeyDown((int)sf::Keyboard::Key::P))
-		ghost->changeState(Frightened);
+		changeAllGhostsState(Frightened);
 	else if (input->isKeyDown((int)sf::Keyboard::Key::O))
-		ghost->changeState(Scatter);
+		changeAllGhostsState(Scatter);
 	else if (input->isKeyDown((int)sf::Keyboard::Key::I))
-		ghost->changeState(Chase);
+		changeAllGhostsState(Chase);
 	else if (input->isKeyDown((int)sf::Keyboard::Key::U))
-		ghost->changeState(Dead);
+		changeAllGhostsState(Dead);
 
 
 	if (input->isKeyDown((int)sf::Keyboard::Key::J))
@@ -183,32 +261,38 @@ void Engine::fixedUpdate(float dt)
 		//score += ScorePerPellet;
 		//gameGrid->set(pacman->gridPosition, Tile::Empty);
 		//frigthen ghost
-		ghost->changeState(Frightened);
+		changeAllGhostsState(Frightened);
 		//lock state for specific game time ? 
 	}
 
 
 	//Game Grid - Ghost collision
-	if (ghost->getState() == Dead && ghost->gridPosition == ghost->getRespawnTile())
+	for (auto& g : ghosts)
 	{
-		//The ghost might enter scatter mode depening on timer ? 
-		ghost->changeState(Chase);
-		//ghost->changeState(Scatter);
-
-	}
-
-	//Pacman-ghost collision
-	if (pacman->gridPosition == ghost->gridPosition)
-	{
-		//If ghost frightened pacman eats ghost
-		if (ghost->getState() == Frightened)
+		auto ghost = dynamic_cast<Ghost*>(g.get());
+		if (ghost->getState() == Dead && ghost->gridPosition == ghost->getRespawnTile())
 		{
-			ghost->changeState(Dead);
-			//Get points
-			score += ScorePerGhost;
+			//The ghost might enter scatter mode depening on timer ? 
+			ghost->changeState(Chase);
+			//ghost->changeState(Scatter);
+
+		}
+
+		//Pacman-ghost collision
+		if (pacman->gridPosition == ghost->gridPosition)
+		{
+			//If ghost frightened pacman eats ghost
+			if (ghost->getState() == Frightened)
+			{
+				ghost->changeState(Dead);
+				//Get points
+				score += ScorePerGhost;
+			}
+
 		}
 
 	}
+
 	
 
 
@@ -224,14 +308,29 @@ void Engine::render()
 	window->clear();
 	gameGrid->draw(*win);
 	pacman->draw(*win);
-	chaseGhost->draw(*win);
+	for (auto& g : this->ghosts)
+		g->draw(*win);
 	win->draw(*debugText);
 
 	window->display();
 }
 
+ void Engine::changeAllGhostsState(int state)
+{
+	 for (auto& g : ghosts)
+	 {
+		 auto ghost = dynamic_cast<Ghost*>(g.get());
+		 ghost->changeState((GhostStateEnum)state);
+
+	 }
+
+}
+
 void Engine::update(float lag)
 {
+
+	for (auto& g : this->ghosts)
+		g->update(lag);
 	debugText->setCharacterSize(15);
 
 	std::string debugString = "";

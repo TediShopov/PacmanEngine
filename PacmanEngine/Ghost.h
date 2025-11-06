@@ -30,30 +30,61 @@ public:
 		const GameLevelGrid* gameGrid,
 		sf::Sprite* sprite,
 		const GridEntity* target,
-		const GridEntity* ally,
-		sf::Vector2i respawn,
-		sf::Vector2i scatter
+		GhostMovementEnum prefferedChase
 	);
 
+	Ghost(const Ghost& other) {
+		(*this) = other;
+	}
+	Ghost& operator= (const Ghost& other)
+	{
+		this->levelGrid = other.levelGrid;
+		this->sprite = other.sprite;
+		this->gridPosition = other.gridPosition;
+		this->worldPos = other.worldPos;
+		this->movementSpeed = other.movementSpeed;
+		this->ally = other.ally;
+		this->prefferedChaseStrategy = other.prefferedChaseStrategy;
+		this->state = other.state;
+		this->target = other.target;
+		this->respawnTile = other.respawnTile;
+		this->scatterTile = other.scatterTile;
+		return *this;
+
+	}
+
+	~Ghost() = default;
+
+
+
+
+	void applyState(GhostStateEnum newStateEnum);
 	void changeState(GhostStateEnum newStateEnum);
 	std::unique_ptr<IMovementStrategy> createMovementStrategy(GhostMovementEnum e);
 
 	GhostStateEnum getState() const { return state; }
 	sf::Vector2i getRespawnTile() const { return this->respawnTile; }
 
+	const GridEntity* ally;
+	sf::Vector2i scatterTile;
+	sf::Vector2i respawnTile;
+
+	GhostMovementEnum getChaseStrategy() const { return prefferedChaseStrategy; }
+	void setChaseStrategy(GhostMovementEnum e);
+
+
 private:
+	GhostMovementEnum prefferedChaseStrategy;
+	GhostStateEnum state;
+	const GridEntity* target;
+
 	 std::unordered_map<GhostStateEnum, GhostState> stateMap =
 	{
 		{GhostStateEnum::Chase,			GhostState { GhostMovementEnum::Blinky,2,sf::Color{255,255,255,255} }},
 		{GhostStateEnum::Scatter,		GhostState { GhostMovementEnum::Retreat,2,sf::Color{255,255,255,255} }},
-		{GhostStateEnum::Frightened,	GhostState { GhostMovementEnum::Flee,1.5,sf::Color{0,0,1,255} }},
+		//{GhostStateEnum::Frightened,	GhostState { GhostMovementEnum::Flee,1.5,sf::Color{0,0,1,255} }},
+		{GhostStateEnum::Frightened,	GhostState { GhostMovementEnum::Flee,0.1f,sf::Color{0,0,255,255} }},
 		{GhostStateEnum::Dead,			GhostState { GhostMovementEnum::Respawn,3.5,sf::Color{255,255,255,20} }}
 	};
-	const GridEntity* target;
-	const GridEntity* ally;
-	GhostStateEnum state;
-	GhostMovementEnum prefferedChaseStrategy;
-	sf::Vector2i scatterTile;
-	sf::Vector2i respawnTile;
 };
 

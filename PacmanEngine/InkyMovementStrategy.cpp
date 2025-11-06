@@ -28,5 +28,5 @@ sf::Vector2i InkyMovementStrategy::computeDesiredDirection(const GridEntity& sel
 	}
 
 	sf::Vector2i targetCoordinate = ally->gridPosition + (offsetTargetCoordinate - ally->gridPosition) * 2;
-	return targetCoordinate;
+	return computeDesiredDirectionToReach(self,targetCoordinate);
 }

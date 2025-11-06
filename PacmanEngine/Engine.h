@@ -6,6 +6,7 @@
 #include "Grid.h"
 #include "GridEntity.h"
 
+class Ghost;
 
 class Engine
 {
@@ -22,6 +23,8 @@ public:
 
 	Engine();
 
+	void initGhosts(const sf::Vector2i& defaultGhostSpawnPoint);
+
 	//sf::Font font("../assets/arial.ttf");
 
 
@@ -37,12 +40,16 @@ public:
 	void update(float lag);
 	void render();
 
+	void changeAllGhostsState(int state);
+
 private:
 	std::unordered_map<std::string, std::unique_ptr<sf::Texture>> textureMap;
 	std::unordered_map<std::string, std::unique_ptr<sf::Sprite>> spriteMap;
 	std::unique_ptr<GameLevelGrid> gameGrid;
 	std::unique_ptr<GridEntity> pacman;
-	std::unique_ptr<GridEntity> chaseGhost;
+	//std::unique_ptr<GridEntity> blinky;
+	std::vector<std::unique_ptr<GridEntity>> ghosts;
+	//std::unique_ptr<Ghost> pinky;
 	//std::vector<std::unique_ptr<GridEntity>> ghosts;
 	sf::Font debugFont;
 	sf::Text* debugText;

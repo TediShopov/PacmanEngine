@@ -7,18 +7,24 @@ Ghost::Ghost(
 	const GameLevelGrid* gameGrid,
 	sf::Sprite* sprite,
 	const GridEntity* target,
-	const GridEntity* ally,
-	sf::Vector2i respawn,
-	sf::Vector2i scatter
-) :
-	GridEntity(), target(target), state(Chase), prefferedChaseStrategy(Blinky),
-	respawnTile(respawn), scatterTile(scatter), ally(ally)
+	GhostMovementEnum prefferecChase) :
+GridEntity(), target(target), state(Chase), prefferedChaseStrategy(Blinky),
+respawnTile(sf::Vector2i{0,0}), scatterTile(sf::Vector2i{0,0}), ally(nullptr)
+
 	{
-		stateMap.at(Chase).movementStrategy = prefferedChaseStrategy;
-		this->movementStrategy = std::make_unique<ChaseMovementStrategy>(target);
-		this->sprite = sprite;
-		this->levelGrid = gameGrid;
+	this->levelGrid = gameGrid;
+	this->sprite = sprite;
+	stateMap.at(Chase).movementStrategy = prefferedChaseStrategy;
+	applyState(state);
 	}
+
+void Ghost::applyState(GhostStateEnum newStateEnum)
+{
+	GhostState newState = this->stateMap.at(newStateEnum);
+	this->movementSpeed = newState.movementSpeed;
+	this->sprite->setColor(newState.newColor);
+	this->movementStrategy = createMovementStrategy(newState.movementStrategy);
+}
 
 void Ghost::changeState(GhostStateEnum newStateEnum) {
 
@@ -26,11 +32,7 @@ void Ghost::changeState(GhostStateEnum newStateEnum) {
 		if (newStateEnum == this->state)
 			return;
 
- 
-		GhostState newState = this->stateMap.at(newStateEnum);
-		this->movementSpeed = newState.movementSpeed;
-		this->sprite->setColor(newState.newColor);
-		this->movementStrategy = createMovementStrategy(newState.movementStrategy);
+		this->applyState(newStateEnum);
 
 		//If previous state was aggro or new state is aggro
 		if (this->state == GhostStateEnum::Chase || newStateEnum == GhostStateEnum::Chase)
@@ -70,3 +72,13 @@ std::unique_ptr<IMovementStrategy> Ghost::createMovementStrategy(GhostMovementEn
 	}
 
 	}
+
+void Ghost::setChaseStrategy(GhostMovementEnum newState)
+{
+	this->prefferedChaseStrategy = newState;
+	stateMap.at(Chase).movementStrategy = newState;
+	if (state == Chase)
+		applyState(Chase);
+
+		
+}
