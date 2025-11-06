@@ -156,6 +156,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ChaseMovementStrategy.cpp" />
+    <ClCompile Include="ClydeMovementStrategy.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="FrightenedMovementStrategy.cpp" />
     <ClCompile Include="Ghost.cpp" />
@@ -173,6 +174,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChaseMovementStrategy.h" />
+    <ClInclude Include="ClydeMovementStrategy.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="FrightenedMovementStrategy.h" />
     <ClInclude Include="Ghost.h" />

@@ -9,8 +9,7 @@ sf::Vector2i ChaseMovementStrategy::computeDesiredDirection(const GridEntity& se
     return computeDesiredDirectionToReach(self, this->target->gridPosition);
 }
 
-sf::Vector2i ChaseMovementStrategy::computeDesiredDirectionToReach(const GridEntity& self, sf::Vector2i target) const
-{
+sf::Vector2i ChaseMovementStrategy::computeDesiredDirectionToReach(const GridEntity& self, sf::Vector2i target) const {
     auto grid = self.levelGrid;
     auto currentTile = self.gridPosition ;
 

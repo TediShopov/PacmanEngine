@@ -5,13 +5,9 @@ class InkyMovementStrategy :
     public ChaseMovementStrategy
 {
 public:
-	InkyMovementStrategy(const GridEntity* target, const GridEntity* ally) : 
-		ChaseMovementStrategy(target),
-		ally(ally)
-	{
+	InkyMovementStrategy(const GridEntity* target, const GridEntity* ally);
 
-			
-	}
+	sf::Vector2i computeDesiredDirection(const GridEntity& self) const final;
 
 protected:
 	const GridEntity* ally;
