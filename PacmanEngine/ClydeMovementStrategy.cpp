@@ -12,5 +12,5 @@ sf::Vector2i ClydeMovementStrategy::computeDesiredDirection(const GridEntity& se
 bool ClydeMovementStrategy::shouldChaseTarget(const GridEntity& self) const
 {
     auto delta = self.gridPosition - target->gridPosition;
-    return delta.length() < aggroProximity;
+    return ((sf::Vector2f)(delta)).length() < aggroProximity;
 }

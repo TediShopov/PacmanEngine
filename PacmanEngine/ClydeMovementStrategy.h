@@ -9,16 +9,20 @@ public:
     const int aggroProximity;
 
     ClydeMovementStrategy(const GridEntity* target, sf::Vector2i scatterTarget, int aggroProx = 8) :
-        ChaseMovementStrategy(target), aggroProximity(aggroProx)
+        ChaseMovementStrategy(target),scatterTarget(scatterTarget), aggroProximity(aggroProx)
     {
             
     }
     // Inherited via IMovementStrategy
     sf::Vector2i computeDesiredDirection(const GridEntity& self) const final;
 private:
+
+    sf::Vector2i scatterTarget;
+
+
     //Determines if Clyde should be aggresive and chase the target or 
     //head towards his scatter target
-    bool shouldChaseTarget(const GridEntity& self);
+    bool shouldChaseTarget(const GridEntity& self) const;
 
 };
 
