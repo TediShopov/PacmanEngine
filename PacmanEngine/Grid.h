@@ -15,6 +15,11 @@ class GameLevelGrid
 {
 
 public:
+	sf::Vector2i blinkySpawnPoint;
+	sf::Vector2i inkySpawnPoint;
+	sf::Vector2i clydeSpawnPoint;
+	sf::Vector2i pinkySpawnPoint;
+	sf::Vector2i ghostHouseEntrance;
 	sf::Vector2i playerSpawnPoint;
 
 	inline static const std::unordered_map<DirectionEnum, sf::Vector2i> Directions{
@@ -24,7 +29,7 @@ public:
 		{RIGHT,		sf::Vector2i(1,0)}
 	};
 
-	enum class TileType { Empty, Wall, Dot, PowerPill, Door };
+	enum class TileType { Empty, Wall, Dot, PowerPill, Door, GhostHouse};
 
 	std::unordered_map<TileType, sf::Sprite> tileToSpriteMap;
 
@@ -104,9 +109,34 @@ public:
 				if (token == "W") gridData.push_back(TileType::Wall);
 				else if (token == ".") gridData.push_back(TileType::Dot);
 				else if (token == "o") gridData.push_back(TileType::PowerPill);
+				else if (token == "E")
+				{
+					gridData.push_back(TileType::Door);
+					this->ghostHouseEntrance = { cols,rows };
+				}
 				else if (token == "P")
 				{
 					gridData.push_back(TileType::Empty);
+					this->pinkySpawnPoint = { cols,rows };
+				}
+				else if (token == "I")
+				{
+					gridData.push_back(TileType::Empty);
+					this->inkySpawnPoint = { cols,rows };
+				}
+				else if (token == "B")
+				{
+					gridData.push_back(TileType::Empty);
+					this->blinkySpawnPoint = { cols,rows };
+				}
+				else if (token == "C")
+				{
+					gridData.push_back(TileType::Empty);
+					this->clydeSpawnPoint = { cols,rows };
+				}
+				else if (token == "H")
+				{
+					gridData.push_back(TileType::Wall);
 					this->playerSpawnPoint = { cols,rows };
 
 				}

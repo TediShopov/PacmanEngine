@@ -12,6 +12,12 @@ public:
 		this->levelGrid = gameGrid;
 	}
 
+	bool canTraverse(GameLevelGrid::TileType type) const override
+	{
+		return type != GameLevelGrid::TileType::Door && type != GameLevelGrid::TileType::Wall;
+
+	}
+
 
 
 };

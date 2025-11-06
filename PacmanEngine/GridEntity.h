@@ -11,13 +11,17 @@ public:
 	GridEntity();
 	~GridEntity();
 
-	//virtual void updateInput(const IInput* input);
 	virtual void fixedUpdate(float dt);
 	virtual void update(float lag);
 	virtual void draw(sf::RenderWindow& win);
 
 	 bool canChangeDirection(float dt);
 	 bool approximatelyNearCenter(float eps);
+
+	 virtual bool canTraverse(GameLevelGrid::TileType type) const
+	 {
+		 return type != GameLevelGrid::TileType::Wall;
+	 }
 
 
 //private:

@@ -46,7 +46,7 @@ Engine::Engine() :
 
 	//Create Ghosts
 	//Blinky
-	//initGhosts(defaultGhostSpawnPoint);
+	initGhosts(defaultGhostSpawnPoint);
 	//pinky = std::make_unique<Ghost>(*blinky);
 	//pinky->setChaseStrategy(Pinky);
 
@@ -68,41 +68,41 @@ void Engine::initGhosts(const sf::Vector2i& defaultGhostSpawnPoint)
 	);
 	auto gridDim = gameGrid->getGridDimensions();
 	blinky->sprite = spriteMap.at(BlinkyString).get();
-
-	blinky->respawnTile = sf::Vector2i(gameGrid->getGridDimensions() / 2);
+	blinky->respawnTile = gameGrid->blinkySpawnPoint;
 	blinky->scatterTile = {gridDim.x, 0}; // Blinky scatter tile is top-right
-
-	blinky->gridPosition = { defaultGhostSpawnPoint };
+	blinky->gridPosition = blinky->respawnTile;
 	blinky->worldPos = gameGrid->getPixelCoordinates(blinky->gridPosition);
 
 	auto pinky = std::make_unique<Ghost>(*blinky);
+	pinky->respawnTile = gameGrid->pinkySpawnPoint;
 	pinky->sprite = spriteMap.at(PinkyString).get();
 	pinky->scatterTile = { 2, 0 }; // Pinky's scatter tile is on the top-left
 	pinky->setChaseStrategy(Pinky);
-	pinky->gridPosition = defaultGhostSpawnPoint + sf::Vector2i{ 2, 2 };
+	pinky->gridPosition = pinky->respawnTile;
 	pinky->worldPos = gameGrid->getPixelCoordinates(pinky->gridPosition);
 
 	auto inky = std::make_unique<Ghost>(*blinky);
+	 inky->respawnTile = gameGrid->inkySpawnPoint;
 	inky->sprite = spriteMap.at(InkyString).get();
 	inky->ally = blinky.get();
 	inky->scatterTile = { gridDim.x, gridDim.y}; // Pinky's scatter tile is on the bottom-right
 	inky->setChaseStrategy(Inky);
-	inky->gridPosition = defaultGhostSpawnPoint + sf::Vector2i{ 2, 2 };
+	inky->gridPosition = inky->respawnTile;
 	inky->worldPos = gameGrid->getPixelCoordinates(pinky->gridPosition);
 
 	auto clyde = std::make_unique<Ghost>(*blinky);
+	clyde->respawnTile = gameGrid->clydeSpawnPoint;
 	clyde->sprite = spriteMap.at(ClydeString).get();
 	clyde->setChaseStrategy(Clyde); 
 	clyde->ally = blinky.get();
-
 	clyde->scatterTile = { 0, gridDim.y}; // Clyde's scatter tile is at the bottom right
-	clyde->gridPosition = defaultGhostSpawnPoint + sf::Vector2i{ 2, 2 };
+	clyde->gridPosition = clyde->respawnTile;
 	clyde->worldPos = gameGrid->getPixelCoordinates(pinky->gridPosition);
 
 	ghosts.push_back(std::move(blinky));
 	ghosts.push_back(std::move(pinky));
 	ghosts.push_back(std::move(inky));
-	//ghosts.push_back(std::move(clyde));
+	ghosts.push_back(std::move(clyde));
 }
 
 void Engine::initGameLevelGrid()
@@ -121,7 +121,7 @@ void Engine::initGameLevelGrid()
 	auto win = sfmlWindow->raw();
 
 	using TT = GameLevelGrid::TileType;
-	this->gameGrid->loadLevelCsf("../assets/PacLevel3.csv");
+	this->gameGrid->loadLevelCsf("../assets/PacLevel4.csv");
 }
 
 void Engine::initSprites()
@@ -274,8 +274,10 @@ void Engine::fixedUpdate(float dt)
 	for (auto& g : ghosts)
 	{
 		auto ghost = dynamic_cast<Ghost*>(g.get());
-		if (ghost->getState() == Dead && ghost->gridPosition == ghost->getRespawnTile())
+		if (ghost->getState() == Dead && ghost->gridPosition == ghost->getRespawnTile() && ghost->approximatelyNearCenter(2.0f))
 		{
+			ghost->desiredDirecton = GameLevelGrid::Directions.at(UP);
+			ghost->currentDirecton = GameLevelGrid::Directions.at(UP);
 			//The ghost might enter scatter mode depening on timer ? 
 			ghost->changeState(Chase);
 			//ghost->changeState(Scatter);

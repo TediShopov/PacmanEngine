@@ -63,7 +63,7 @@ void GridEntity::fixedUpdate(float dt)
 	const sf::Vector2f nextWolrdPos = worldPos + step;
 
 	// If tile is walkable -> walk freely
-	if (nextTile != GameLevelGrid::TileType::Wall)
+	if (this->canTraverse(nextTile))
 	{
 		worldPos = nextWolrdPos;
 		return;
@@ -117,10 +117,10 @@ void GridEntity::draw(sf::RenderWindow& win)
 	 {
 		 auto nextDesired = gridPosition + desiredDirecton;
 
-		 bool nextIsNotWall = levelGrid->at(nextDesired) != GameLevelGrid::TileType::Wall;
+		 bool nextCanBeTraversed = this->canTraverse(levelGrid->at(nextDesired));
 		 bool approximatelyCloseToCenter = approximatelyNearCenter(2.0f);
 		 //bool approximatelyCloseToCenter =true;
-		 return nextIsNotWall && approximatelyCloseToCenter;
+		 return nextCanBeTraversed && approximatelyCloseToCenter;
 
 	 }
 

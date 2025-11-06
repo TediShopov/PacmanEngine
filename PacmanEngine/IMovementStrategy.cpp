@@ -9,8 +9,8 @@
     auto grid = self.levelGrid;
     using GT = GameLevelGrid::TileType;
 
-    bool isNotWall = grid->at(tileInDir) != GT::Wall;
+    bool canTraverse = self.canTraverse(grid->at(tileInDir));
     bool isNotReverseDirection = !GameLevelGrid::areDirectionRevererse(dirVecor, self.currentDirecton);
 
-    return isNotWall && isNotReverseDirection;
+    return canTraverse && isNotReverseDirection;
 }
