@@ -135,9 +135,9 @@ void PacmanGame::initTextures()
 
 void PacmanGame::initLabels()
 {
-	this->debugText = new sf::Text(this->debugFont);
-	this->scoreText = new sf::Text(this->debugFont);
-	this->finalText = new sf::Text(this->debugFont);
+	this->debugText = std::make_unique<sf::Text>(this->debugFont);
+	this->scoreText = std::make_unique<sf::Text>(this->debugFont);
+	this->finalText = std::make_unique<sf::Text>(this->debugFont);
 
 	scoreText->setCharacterSize(48);
 	scoreText->setPosition(gameGrid->getPixelCoordinates({ 0,gameGrid->getGridDimensions().y }));

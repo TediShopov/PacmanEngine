@@ -89,9 +89,12 @@ protected:
 	std::unordered_map<GhostHouseEntityEnum, std::unique_ptr<Ghost>> ghosts;
 
 	sf::Font debugFont;
-	sf::Text* debugText;
-	sf::Text* scoreText;
-	sf::Text* finalText;
+//	sf::Text* debugText;
+//	sf::Text* scoreText;
+//	sf::Text* finalText;
+	std::unique_ptr<sf::Text> debugText;
+	std::unique_ptr<sf::Text> scoreText;
+	std::unique_ptr<sf::Text> finalText;
 
 	Timer frightenedTimer;
 	uint32_t score;
