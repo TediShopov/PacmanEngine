@@ -1,2 +1,12 @@
-# PacmanEngine
-A minimal modern C++ implementation of a single level of Pac-Man
+# PacmanEngine (C++ / SFML)
+
+
+
+A single-level Pac-Man clone built with C++17 and SFML3, featuring authentic ghost AI behavior (chase, scatter, frightened)
+
+\*\*Controls:\*\*
+
+\- \*\*W, A, S, D\*\* — Move Pac-Man  
+
+\- \*\*G\*\* — Pause, unpause, and reset the game
+
