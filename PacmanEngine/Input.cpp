@@ -80,11 +80,11 @@ bool Input::isPressed(int key) const
 // Updates current state of keys. Focuses on pressed states. If pressed and processed, should be set to up.
 void Input::update(float dt)
 {
-	for (int i = 0; i < pressed.size(); i++)
-	{
-		setKeyUp(pressed[i]);
-	}
-	pressed.clear();
+//	for (int i = 0; i < pressed.size(); i++)
+//	{
+//		setKeyUp(pressed[i]);
+//	}
+//	pressed.clear();
 
 	if (mouse.left == MouseState::PRESSED)
 	{

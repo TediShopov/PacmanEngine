@@ -19,8 +19,10 @@ const sf::Vector2f PacTileSetSpriteOrigin{ 8,8 };
 const sf::Vector2i InitialGridDimensions{ 10,10 };
 const sf::Color DebugWallColor{ 5,10,120,255 };
 
-PacmanGame::PacmanGame() : Engine()
+PacmanGame::PacmanGame() : Engine(),
+	score(0), gameState(GameState::Paused)
 {
+	setPaused(true);
 	this->debugFont.openFromFile("../assets/arial.ttf");
 	this->debugText = new sf::Text(this->debugFont);
 
@@ -37,17 +39,34 @@ void PacmanGame::init()
 	initSprites();
 	initGameLevelGrid();
 
+	//initWinCondition():
+	for (size_t row = 0; row < gameGrid->gridTileDimensions.y; row++)
+	{
+		for (size_t col = 0; col < gameGrid->gridTileDimensions.x; col++)
+		{
+			if(gameGrid->at(row,col) == GameLevelGrid::TileType::Dot)
+				++dotsRemaining;
+		}
+	}
+
 	//Init debug grid entity
 	initPacman();
 	//Create Ghosts
-	initGhosts();
+	//initGhosts();
+}
+
+void PacmanGame::reset()
+{
+	gameState = GameState::Running;
+	setPaused(false);
+	init();
 }
 
 void PacmanGame::initPacman()
 {
+	if(!pacman)
+		pacman = std::make_unique<Pacman>(gameGrid.get(), input.get(), spriteMap.at(PacmanString).get());
 	gameGrid->playerSpawnPoint = { 1,1 };
-	pacman = std::make_unique<Pacman>(gameGrid.get(), input.get(), spriteMap.at(PacmanString).get());
-
 	pacman->gridPosition = { gameGrid->playerSpawnPoint };
 	pacman->worldPos = gameGrid->getPixelCoordinates(gameGrid->playerSpawnPoint);
 	pacman->movementSpeed = 2;
@@ -55,7 +74,7 @@ void PacmanGame::initPacman()
 
 void PacmanGame::initGhosts()
 {
-
+	ghosts.clear();
 	auto blinky = std::make_unique<Ghost>(
 		gameGrid.get(),
 		spriteMap.at(PacmanString).get(),
@@ -103,8 +122,11 @@ void PacmanGame::initGhosts()
 
 void PacmanGame::initGameLevelGrid()
 {
-	gameGrid = std::make_unique<GameLevelGrid>(InitialGridDimensions.x, InitialGridDimensions.y,
+	if (!gameGrid)
+	{
+		gameGrid = std::make_unique<GameLevelGrid>(InitialGridDimensions.x, InitialGridDimensions.y,
 		sf::Vector2f{ (float)PacTileSetSpriteDimensions.x ,(float)PacTileSetSpriteDimensions.y });
+	}
 	gameGrid->setPosition({ 0,0 });
 
 	gameGrid->tileToSpriteMap.insert({ GameLevelGrid::TileType::Dot, *spriteMap.at(BigCoin) });
@@ -114,7 +136,7 @@ void PacmanGame::initGameLevelGrid()
 	auto win = sfmlWindow->raw();
 
 	using TT = GameLevelGrid::TileType;
-	this->gameGrid->loadLevelCsf("../assets/PacLevel4.csv");
+	this->gameGrid->loadLevelCsf("../assets/PacLevel5.csv");
 }
 
 void PacmanGame::initSprites()
@@ -170,15 +192,10 @@ void PacmanGame::initTextures()
 
 void PacmanGame::fixedUpdate(float dt)
 {
-
 	frightenedTimer.update(dt);
-
-
-
 	pacman->fixedUpdate(dt);
 	for (auto& g : this->ghosts)
 		g->fixedUpdate(dt);
-	input->update(dt);
 	//Debug Control Game Level Grid
 #ifdef _DEBUG
 
@@ -210,6 +227,14 @@ void PacmanGame::fixedUpdate(float dt)
 	if (gameGrid->at(pacman->gridPosition) == Tile::Dot)
 	{
 		score += ScorePerPellet;
+		--dotsRemaining;
+		if (dotsRemaining <= 0)
+		{
+			gameState = GameState::Won;
+			setPaused(true);
+
+		}
+
 		gameGrid->set(pacman->gridPosition, Tile::Empty);
 	}
 	if (gameGrid->at(pacman->gridPosition) == Tile::PowerPill)
@@ -244,7 +269,11 @@ void PacmanGame::fixedUpdate(float dt)
 				//Get points
 				score += ScorePerGhost;
 			}
-
+			else
+			{
+				this->gameState = GameState::Lost;
+				setPaused(true);
+			}
 		}
 
 	}
@@ -259,6 +288,9 @@ void PacmanGame::fixedUpdate(float dt)
 
 void PacmanGame::render()
 {
+
+
+
 	auto sfmlWindow = static_cast<WindowSFML*>(window.get());
 	auto win = sfmlWindow->raw();
 	window->clear();
@@ -296,16 +328,60 @@ void PacmanGame::eatPill()
 
 void PacmanGame::update(float lag)
 {
+	if (input->isKeyDown((int)sf::Keyboard::Key::G))
+	//if (input->isPressed((int)sf::Keyboard::Key::G))
+	{
+		if (gameState == GameState::Paused)
+		{
+			setPaused(false);
+			gameState = GameState::Running;
+			input->setKeyUp((int)sf::Keyboard::Key::G);
+		}
+		else if (gameState == GameState::Running)
+		{
+			setPaused(true);
+			gameState = GameState::Paused;
+			input->setKeyUp((int)sf::Keyboard::Key::G);
+		}
+		else if (gameState == GameState::Lost)
+		{
+			reset();
+		}
+		else if (gameState == GameState::Won)
+		{
+			reset();
+
+
+		}
+
+	}
 
 	for (auto& g : this->ghosts)
 		g->update(lag);
-	debugText->setCharacterSize(15);
+	debugText->setCharacterSize(25);
 
 	std::string debugString = "";
 	debugString += "Character Pixel Pos X:" + std::to_string(pacman->worldPos.x) + "Y: " + std::to_string(pacman->worldPos.y) + "\n";
 	debugString += "Character Grid Coord X:" + std::to_string(pacman->gridPosition.x) + "Y: " + std::to_string(pacman->gridPosition.y) + "\n";
-	debugString += "SCORE: " + std::to_string(score);
+	debugString += "SCORE: " + std::to_string(score) + "\n";
 
+	switch (this->gameState)
+	{
+	case GameState::Lost:
+		debugString += "GAME STATE: LOST \n";
+		break;
+	case GameState::Won:
+		debugString += "GAME STATE: WON \n";
+		break;
+	case GameState::Running:
+		debugString += "GAME STATE: RUNNING \n";
+		break;
+	case GameState::Paused:
+		debugString += "GAME STATE: PAUSED \n";
+		break;
+	default:
+		break;
+	}
 
 	debugText->setPosition(gameGrid->getPixelCoordinates({0,12}));
 

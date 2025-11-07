@@ -30,11 +30,25 @@ public:
 	virtual void update(float lag);
 	virtual void render();
 
+	bool getPaused();
+
+
+	void setPaused(bool pause);
+	
 
 protected:
+
 	std::unordered_map<std::string, std::unique_ptr<sf::Texture>> textureMap;
 	std::unordered_map<std::string, std::unique_ptr<sf::Sprite>> spriteMap;
 	sf::Font debugFont;
+	
+	const float fixedTimeStep = 0.0166f;
+	
+	float fixedDt = fixedTimeStep; //approximately 60hz update loop
+	float lag = 0.0f;
+
+private:
+	bool isPaused = false;
 
 };
 

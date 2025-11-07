@@ -36,8 +36,6 @@ int Engine::run()
 	using secondsf = std::chrono::duration<float>;
 	auto previous = time::now();
 
-	float fixedDt = 0.0166f; //approximately 60hz update loop
-	float lag = 0.0f;
 
 	while (window->isOpen())
 	{
@@ -50,11 +48,13 @@ int Engine::run()
 		if (input->isQuitRequested())
 			break;
 
-		while (lag >= fixedDt)
+
+		while (lag >= fixedDt && fixedDt != 0)
 		{
 			fixedUpdate(fixedDt);
 			lag -= fixedDt;
 		}
+		input->update(0);
 
 		update(lag);
 		render();
@@ -68,6 +68,25 @@ void Engine::fixedUpdate(float dt)
 
 void Engine::render()
 {
+}
+
+ bool Engine::getPaused()
+{
+	return isPaused;
+}
+
+ void Engine::setPaused(bool pause)
+{
+	if (isPaused != pause)
+	{
+		if (pause == true)
+			fixedDt = 0;
+		else {
+			fixedDt = fixedTimeStep;
+			lag = 0;
+		}
+	}
+	isPaused = pause;
 }
 
 void Engine::update(float lag)

@@ -1,5 +1,11 @@
 #pragma once
 #include "Engine.h"
+
+enum class GameState {
+	Lost, Won, Running, Paused
+};
+
+
 class PacmanGame :
     public Engine
 {
@@ -10,6 +16,7 @@ public:
 	PacmanGame();
 
 	virtual void init() override;
+	void reset();
 
 
 
@@ -38,6 +45,8 @@ protected:
 	}
 
 protected:
+	GameState gameState;
+
 	std::unique_ptr<GameLevelGrid> gameGrid;
 	std::unique_ptr<GridEntity> pacman;
 	std::vector<std::unique_ptr<GridEntity>> ghosts;
@@ -45,5 +54,6 @@ protected:
 	sf::Text* debugText;
 	Timer frightenedTimer;
 	uint32_t score;
+	uint32_t dotsRemaining;
 };
 
