@@ -24,47 +24,17 @@ public:
 
 	Engine();
 
-	void initGhosts(const sf::Vector2i& defaultGhostSpawnPoint);
-
-	//sf::Font font("../assets/arial.ttf");
-
-
-	void initGameLevelGrid();
-
-	void initSprites();
-
-	void initTextures();
-
-
+	virtual void init();
 	int run();
-	void fixedUpdate(float dt);
-	void update(float lag);
-	void render();
+	virtual void fixedUpdate(float dt);
+	virtual void update(float lag);
+	virtual void render();
 
-	void changeAllGhostsState(int state);
 
-	void eatPill();
-	//Reverts specific ghosts to chase/scatter mode after frigtened state
-	//duration has been exhausted
-	void revertToChaseAfterFrightened(Timer* t);
-
-private:
+protected:
 	std::unordered_map<std::string, std::unique_ptr<sf::Texture>> textureMap;
 	std::unordered_map<std::string, std::unique_ptr<sf::Sprite>> spriteMap;
-	std::unique_ptr<GameLevelGrid> gameGrid;
-	std::unique_ptr<GridEntity> pacman;
-	//std::unique_ptr<GridEntity> blinky;
-	std::vector<std::unique_ptr<GridEntity>> ghosts;
-	//std::unique_ptr<Ghost> pinky;
-	//std::vector<std::unique_ptr<GridEntity>> ghosts;
 	sf::Font debugFont;
-	sf::Text* debugText;
-
-
-	Timer frightenedTimer;
-
-	uint32_t score;
-
 
 };
 

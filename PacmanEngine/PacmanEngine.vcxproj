@@ -168,6 +168,7 @@
     <ClCompile Include="InputMovementStrategy.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Pacman.cpp" />
+    <ClCompile Include="PacmanGame.cpp" />
     <ClCompile Include="PinkyMovementStrategy.cpp" />
     <ClCompile Include="ScatterMovementStrategy.cpp" />
     <ClCompile Include="Timer.cpp" />
@@ -188,6 +189,7 @@
     <ClInclude Include="InputMovementStrategy.h" />
     <ClInclude Include="IWindow.h" />
     <ClInclude Include="Pacman.h" />
+    <ClInclude Include="PacmanGame.h" />
     <ClInclude Include="PinkyMovementStrategy.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ScatterMovementStrategy.h" />

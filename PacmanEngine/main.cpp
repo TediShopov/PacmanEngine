@@ -1,13 +1,11 @@
 #include <SFML/Graphics.hpp>
-
-#include "Engine.h"
-
+#include "PacmanGame.h"
 
 
 int main()
 {
-    Engine engine;
-    engine.run();
+    PacmanGame pacman;
+    pacman.run();
     return 0;
 
 
