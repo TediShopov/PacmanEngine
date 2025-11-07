@@ -54,11 +54,7 @@ x86/
 # ------------------------------
 # Don’t commit SFML DLLs, libs, or downloaded SDKs.
 # They should be referenced via external/ or system path.
-SFML-*/lib/
-SFML-*/bin/
-*.dll
-*.lib
-*.pdb
+
 
 # ------------------------------
 # OS / Tooling Junk
