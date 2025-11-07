@@ -36,12 +36,10 @@ class PacmanGame :
 
 public:
 	PacmanGame();
-
-	virtual void init() override;
 	void reset();
 
-
-
+	//Engine methods
+	virtual void init() final;
 	virtual void fixedUpdate(float dt) final;
 	virtual void update(float lag) final;
 	virtual void render() final;
