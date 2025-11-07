@@ -56,7 +56,6 @@ x86/
 # They should be referenced via external/ or system path.
 SFML-*/lib/
 SFML-*/bin/
-external/SFML*/
 *.dll
 *.lib
 *.pdb
