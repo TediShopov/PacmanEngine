@@ -2,7 +2,6 @@
 # Core Build Outputs
 # ------------------------------
 # Visual Studio build directories
-[Bb]in/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
