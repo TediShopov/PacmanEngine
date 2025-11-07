@@ -34,7 +34,8 @@
 
 void GridEntity::fixedUpdate(float dt)
 {
-	this->desiredDirecton = movementStrategy->computeDesiredDirection(*this);
+	if(movementStrategy)
+		this->desiredDirecton = movementStrategy->computeDesiredDirection(*this);
 
 	//Update this only if possible
 	if (canChangeDirection(dt))

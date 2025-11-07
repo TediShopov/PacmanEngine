@@ -6,11 +6,11 @@
 
 
 enum GhostStateEnum {
-	Chase, Frightened, Scatter, Dead, Spawning
+	Chase, Frightened, Scatter, Dead, Spawning, Idle
 
  };
 enum GhostMovementEnum {
-	Blinky, Inky, Pinky, Clyde, Retreat, Flee, Respawn, ExitGhostHouse
+	BlinkyMovement, InkyMovement, PinkyMovement, ClydeMovement, Retreat, Flee, Respawn, ExitGhostHouse, NoMovement
  };
 
 struct GhostState 
@@ -56,6 +56,8 @@ public:
 
 	~Ghost() = default;
 
+	bool canTraverse(GameLevelGrid::TileType tile) const override;
+
 
 
 
@@ -81,12 +83,13 @@ private:
 
 	 std::unordered_map<GhostStateEnum, GhostState> stateMap =
 	{
-		{GhostStateEnum::Chase,			GhostState { GhostMovementEnum::Blinky,2,sf::Color{255,255,255,255} }},
+		{GhostStateEnum::Chase,			GhostState { GhostMovementEnum::BlinkyMovement,2,sf::Color{255,255,255,255} }},
 		{GhostStateEnum::Spawning,			GhostState { GhostMovementEnum::ExitGhostHouse,0.5,sf::Color{255,0,0,255} }},
 		{GhostStateEnum::Scatter,		GhostState { GhostMovementEnum::Retreat,2,sf::Color{255,255,255,255} }},
 		//{GhostStateEnum::Frightened,	GhostState { GhostMovementEnum::Flee,1.5,sf::Color{0,0,1,255} }},
 		{GhostStateEnum::Frightened,	GhostState { GhostMovementEnum::Flee,0.1f,sf::Color{0,0,255,255} }},
-		{GhostStateEnum::Dead,			GhostState { GhostMovementEnum::Respawn,3.5,sf::Color{255,255,255,20} }}
+		{GhostStateEnum::Dead,			GhostState { GhostMovementEnum::Respawn,3.5,sf::Color{255,255,255,20} }},
+		{GhostStateEnum::Idle,			GhostState { GhostMovementEnum::NoMovement,0,sf::Color{255,0,255,255} }}
 	};
 };
 

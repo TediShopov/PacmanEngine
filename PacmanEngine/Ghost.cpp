@@ -8,7 +8,7 @@ Ghost::Ghost(
 	sf::Sprite* sprite,
 	const GridEntity* target,
 	GhostMovementEnum prefferecChase) :
-GridEntity(), target(target), state(Spawning), prefferedChaseStrategy(Blinky),
+GridEntity(), target(target), state(Spawning), prefferedChaseStrategy(BlinkyMovement),
 respawnTile(sf::Vector2i{0,0}), scatterTile(sf::Vector2i{0,0}), ally(nullptr)
 
 	{
@@ -17,6 +17,18 @@ respawnTile(sf::Vector2i{0,0}), scatterTile(sf::Vector2i{0,0}), ally(nullptr)
 	stateMap.at(Chase).movementStrategy = prefferedChaseStrategy;
 	applyState(state);
 	}
+
+inline bool Ghost::canTraverse(GameLevelGrid::TileType tile) const
+{
+	using tileType = GameLevelGrid::TileType;
+
+	if (this->state == Dead || this->state == Spawning)
+		return tile != tileType::Wall;
+	else
+		return tile != tileType::Wall && tile != tileType::Door;
+
+
+}
 
 void Ghost::applyState(GhostStateEnum newStateEnum)
 {
@@ -46,16 +58,16 @@ std::unique_ptr<IMovementStrategy> Ghost::createMovementStrategy(GhostMovementEn
 
 	switch (e)
 	{
-	case Blinky:
+	case BlinkyMovement:
 		return std::make_unique<ChaseMovementStrategy>(target);
 		break;
-	case Inky:
+	case InkyMovement:
 		return std::make_unique<InkyMovementStrategy>(target, ally);
 		break;
-	case Pinky:
+	case PinkyMovement:
 		return std::make_unique<PinkyMovementStrategy>(target);
 		break;
-	case Clyde:
+	case ClydeMovement:
 		return std::make_unique<ClydeMovementStrategy>(target,this->scatterTile);
 		break;
 	case Retreat:
@@ -69,6 +81,8 @@ std::unique_ptr<IMovementStrategy> Ghost::createMovementStrategy(GhostMovementEn
 		break;
 	case ExitGhostHouse:
 		return std::make_unique<ScatterMovementStrategy>(this->levelGrid->ghostHouseExit);
+	case NoMovement:
+		return nullptr;
 		break;
 	default:
 		break;

@@ -4,7 +4,8 @@
 #include "Ghost.h"
 
 //A quick and dirty way to reference textures and sprites
-const std::string BigCoin = "BigCoin";
+const std::string Dot = "Dot";
+const std::string PowerPill = "BigCoin";
 const std::string Wall = "Wall";
 const std::string PacmanString = "Pacman";
 const std::string BlinkyString = "Blinky";
@@ -29,6 +30,8 @@ PacmanGame::PacmanGame() : Engine(),
 	frightenedTimer = Timer(1.0);
 	frightenedTimer.onTimerFinished([&](Timer* t) {this->revertToChaseAfterFrightened(t); });
 
+	
+
 	init();
 
 }
@@ -40,19 +43,42 @@ void PacmanGame::init()
 	initGameLevelGrid();
 
 	//initWinCondition():
-	for (size_t row = 0; row < gameGrid->gridTileDimensions.y; row++)
+	for (size_t row = 0; row <= gameGrid->gridTileDimensions.y; row++)
 	{
-		for (size_t col = 0; col < gameGrid->gridTileDimensions.x; col++)
+		for (size_t col = 0; col <= gameGrid->gridTileDimensions.x; col++)
 		{
 			if(gameGrid->at(row,col) == GameLevelGrid::TileType::Dot)
-				++dotsRemaining;
+				dotsRemaining++;
 		}
 	}
+
 
 	//Init debug grid entity
 	initPacman();
 	//Create Ghosts
-	//initGhosts();
+	initGhosts();
+
+	ghostHouse.resetLevel();
+	ghostHouse.onGhostReleased = [&](GhostHouseEntityEnum e) {releaseGhost(e); };
+	ghostHouse.returnGhost({ 
+		GhostHouseEntityEnum::Blinky,
+		GhostHouseEntityEnum::Pinky,
+		GhostHouseEntityEnum::Inky,
+		GhostHouseEntityEnum::Clyde });
+
+	globalStateCycle.init({7,20,7,20,5});
+	globalStateCycle.onGlobalStateChanged =
+		[&](GhostStateEnum) {
+		for (auto& [e, g] : ghosts)
+		{
+			auto ghost = dynamic_cast<Ghost*>(g.get());
+			if (ghost->getState() == Scatter || ghost->getState() == Chase)
+				ghost->changeState(globalStateCycle.getCurrentGlobalState());
+		}
+
+		};
+
+	globalStateCycle.start();
 }
 
 void PacmanGame::reset()
@@ -79,7 +105,7 @@ void PacmanGame::initGhosts()
 		gameGrid.get(),
 		spriteMap.at(PacmanString).get(),
 		pacman.get(),
-		Blinky
+		BlinkyMovement
 	);
 	auto gridDim = gameGrid->getGridDimensions();
 	blinky->sprite = spriteMap.at(BlinkyString).get();
@@ -92,7 +118,7 @@ void PacmanGame::initGhosts()
 	pinky->respawnTile = gameGrid->pinkySpawnPoint;
 	pinky->sprite = spriteMap.at(PinkyString).get();
 	pinky->scatterTile = { 2, 0 }; // Pinky's scatter tile is on the top-left
-	pinky->setChaseStrategy(Pinky);
+	pinky->setChaseStrategy(GhostMovementEnum::PinkyMovement);
 	pinky->gridPosition = pinky->respawnTile;
 	pinky->worldPos = gameGrid->getPixelCoordinates(pinky->gridPosition);
 
@@ -101,24 +127,34 @@ void PacmanGame::initGhosts()
 	inky->sprite = spriteMap.at(InkyString).get();
 	inky->ally = blinky.get();
 	inky->scatterTile = { gridDim.x, gridDim.y}; // Pinky's scatter tile is on the bottom-right
-	inky->setChaseStrategy(Inky);
+	inky->setChaseStrategy(GhostMovementEnum::InkyMovement);
 	inky->gridPosition = inky->respawnTile;
 	inky->worldPos = gameGrid->getPixelCoordinates(pinky->gridPosition);
 
 	auto clyde = std::make_unique<Ghost>(*blinky);
 	clyde->respawnTile = gameGrid->clydeSpawnPoint;
 	clyde->sprite = spriteMap.at(ClydeString).get();
-	clyde->setChaseStrategy(Clyde); 
+	clyde->setChaseStrategy(GhostMovementEnum::ClydeMovement); 
 	clyde->ally = blinky.get();
 	clyde->scatterTile = { 0, gridDim.y+5}; // Clyde's scatter tile is at the bottom right
 	clyde->gridPosition = clyde->respawnTile;
 	clyde->worldPos = gameGrid->getPixelCoordinates(pinky->gridPosition);
 
-	ghosts.push_back(std::move(blinky));
-	ghosts.push_back(std::move(pinky));
-	ghosts.push_back(std::move(inky));
-	ghosts.push_back(std::move(clyde));
+	ghosts.insert({GhostHouseEntityEnum::Blinky,std::move(blinky) });
+	ghosts.insert({GhostHouseEntityEnum::Pinky,std::move(pinky) });
+	ghosts.insert({GhostHouseEntityEnum::Inky,std::move(inky) });
+	ghosts.insert({GhostHouseEntityEnum::Clyde,std::move(clyde) });
+
+	for (auto& [e, g] : ghosts)
+	{
+		auto ghost = dynamic_cast<Ghost*>(g.get());
+		ghost->changeState(Idle);
+
+	}
+
+
 }
+
 
 void PacmanGame::initGameLevelGrid()
 {
@@ -129,14 +165,15 @@ void PacmanGame::initGameLevelGrid()
 	}
 	gameGrid->setPosition({ 0,0 });
 
-	gameGrid->tileToSpriteMap.insert({ GameLevelGrid::TileType::Dot, *spriteMap.at(BigCoin) });
+	gameGrid->tileToSpriteMap.insert({ GameLevelGrid::TileType::Dot, *spriteMap.at(Dot) });
+	gameGrid->tileToSpriteMap.insert({ GameLevelGrid::TileType::PowerPill, *spriteMap.at(PowerPill) });
 	gameGrid->tileToSpriteMap.insert({ GameLevelGrid::TileType::Wall,*spriteMap.at(Wall) });
 
 	auto sfmlWindow = static_cast<WindowSFML*>(window.get());
 	auto win = sfmlWindow->raw();
 
 	using TT = GameLevelGrid::TileType;
-	this->gameGrid->loadLevelCsf("../assets/PacLevel5.csv");
+	this->gameGrid->loadLevelCsf("../assets/PacLevel4.csv");
 }
 
 void PacmanGame::initSprites()
@@ -144,6 +181,9 @@ void PacmanGame::initSprites()
 	auto defSprite = std::make_unique<sf::Sprite>(*textureMap.at(SpritesheetString), sf::IntRect{ { 0,180 },{8,8} });
 	defSprite->setOrigin({4,4});
 	auto globalBounds = defSprite->getGlobalBounds().size;
+
+	auto powerPillSprite = std::make_unique<sf::Sprite>(*defSprite);
+	powerPillSprite->setScale({ 2,2 });
 
 	//Create Wall Sprite
 	auto wallSprite = std::make_unique<sf::Sprite>(*defSprite.get());
@@ -172,7 +212,8 @@ void PacmanGame::initSprites()
 	auto clydeSpreit = std::make_unique<sf::Sprite>(*inkySprite);
 	clydeSpreit->setTextureRect(offsetSpriteTextureRect(*inkySprite, {0,20}));
 
-	this->spriteMap.insert({ BigCoin, std::move(defSprite) });
+	this->spriteMap.insert({ Dot, std::move(defSprite) });
+	this->spriteMap.insert({ PowerPill, std::move(powerPillSprite) });
 	this->spriteMap.insert({ Wall, std::move(wallSprite) });
 	this->spriteMap.insert({ PacmanString, std::move(pacmanSprite) });
 	this->spriteMap.insert({ BlinkyString, std::move(blinkySprite) });
@@ -193,8 +234,9 @@ void PacmanGame::initTextures()
 void PacmanGame::fixedUpdate(float dt)
 {
 	frightenedTimer.update(dt);
+	globalStateCycle.fixedUpdate(dt);
 	pacman->fixedUpdate(dt);
-	for (auto& g : this->ghosts)
+	for (auto& [e,g] : this->ghosts)
 		g->fixedUpdate(dt);
 	//Debug Control Game Level Grid
 #ifdef _DEBUG
@@ -227,24 +269,24 @@ void PacmanGame::fixedUpdate(float dt)
 	if (gameGrid->at(pacman->gridPosition) == Tile::Dot)
 	{
 		score += ScorePerPellet;
+		ghostHouse.onDotEaten();
 		--dotsRemaining;
 		if (dotsRemaining <= 0)
 		{
 			gameState = GameState::Won;
 			setPaused(true);
-
 		}
-
 		gameGrid->set(pacman->gridPosition, Tile::Empty);
 	}
 	if (gameGrid->at(pacman->gridPosition) == Tile::PowerPill)
 	{
 		changeAllGhostsState(Frightened);
+		gameGrid->set(pacman->gridPosition, Tile::Empty);
 	}
 
 
 	//Game Grid - Ghost collision
-	for (auto& g : ghosts)
+	for (auto& [e,g] : ghosts)
 	{
 		auto ghost = dynamic_cast<Ghost*>(g.get());
 		if (ghost->getState() == Dead && ghost->gridPosition == ghost->getRespawnTile() && ghost->approximatelyNearCenter(2.0f))
@@ -257,7 +299,7 @@ void PacmanGame::fixedUpdate(float dt)
 		}
 		if (ghost->getState() == Spawning && ghost->gridPosition==gameGrid->ghostHouseExit && ghost->approximatelyNearCenter(2.0f))
 		{
-			ghost->changeState(Chase);
+			ghost->changeState(globalStateCycle.getCurrentGlobalState());
 		}
 		//Pacman-ghost collision
 		if (pacman->gridPosition == ghost->gridPosition)
@@ -269,7 +311,7 @@ void PacmanGame::fixedUpdate(float dt)
 				//Get points
 				score += ScorePerGhost;
 			}
-			else
+			else if (ghost->getState() != Dead)
 			{
 				this->gameState = GameState::Lost;
 				setPaused(true);
@@ -296,7 +338,7 @@ void PacmanGame::render()
 	window->clear();
 	gameGrid->draw(*win);
 	pacman->draw(*win);
-	for (auto& g : this->ghosts)
+	for (auto& [e,g] : this->ghosts)
 		g->draw(*win);
 	win->draw(*debugText);
 
@@ -305,11 +347,10 @@ void PacmanGame::render()
 
  void PacmanGame::changeAllGhostsState(int state)
 {
-	 for (auto& g : ghosts)
+	 for (auto& [e,g] : ghosts)
 	 {
 		 auto ghost = dynamic_cast<Ghost*>(g.get());
 		 ghost->changeState((GhostStateEnum)state);
-
 	 }
 
 }
@@ -324,6 +365,18 @@ void PacmanGame::eatPill()
  void PacmanGame::revertToChaseAfterFrightened(Timer* t)
  {
 	 changeAllGhostsState(Chase);
+ }
+
+ void PacmanGame::releaseGhost(GhostHouseEntityEnum g)
+ {
+	 auto found = ghosts.find(g);
+	 if (found != ghosts.end())
+	 {
+		 auto ghost = dynamic_cast<Ghost*>(found->second.get());
+		 ghost->changeState(GhostStateEnum::Spawning);
+
+	 }
+
  }
 
 void PacmanGame::update(float lag)
@@ -356,7 +409,7 @@ void PacmanGame::update(float lag)
 
 	}
 
-	for (auto& g : this->ghosts)
+	for (auto& [e,g] : this->ghosts)
 		g->update(lag);
 	debugText->setCharacterSize(25);
 
@@ -364,6 +417,18 @@ void PacmanGame::update(float lag)
 	debugString += "Character Pixel Pos X:" + std::to_string(pacman->worldPos.x) + "Y: " + std::to_string(pacman->worldPos.y) + "\n";
 	debugString += "Character Grid Coord X:" + std::to_string(pacman->gridPosition.x) + "Y: " + std::to_string(pacman->gridPosition.y) + "\n";
 	debugString += "SCORE: " + std::to_string(score) + "\n";
+
+	switch (globalStateCycle.getCurrentGlobalState())
+	{
+	case GhostStateEnum::Scatter:
+		debugString += "GLOBAL STATE: Scatter \n";
+		break;
+	case GhostStateEnum::Chase:
+		debugString += "GLOBAL STATE: Chase \n";
+		break;
+	default:
+		break;
+	}
 
 	switch (this->gameState)
 	{

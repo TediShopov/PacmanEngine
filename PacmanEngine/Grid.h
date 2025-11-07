@@ -109,7 +109,8 @@ public:
 
 				if (token == "W") gridData.push_back(TileType::Wall);
 				else if (token == ".") gridData.push_back(TileType::Dot);
-				else if (token == "o") gridData.push_back(TileType::PowerPill);
+				else if (token == "O") 
+					gridData.push_back(TileType::PowerPill);
 				else if (token == "E")
 				{
 					gridData.push_back(TileType::Door);

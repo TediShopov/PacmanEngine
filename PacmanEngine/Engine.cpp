@@ -4,7 +4,7 @@
 #include "Ghost.h"
 
 //A quick and dirty way to reference textures and sprites
-const std::string BigCoin = "BigCoin";
+const std::string Dot = "BigCoin";
 const std::string Wall = "Wall";
 const std::string PacmanString = "Pacman";
 const std::string BlinkyString = "Blinky";

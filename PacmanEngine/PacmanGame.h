@@ -1,5 +1,7 @@
 #pragma once
 #include "Engine.h"
+#include "GhostHouseController.h"
+#include "ScatterChaseGlobalCycle.h"
 
 enum class GameState {
 	Lost, Won, Running, Paused
@@ -44,12 +46,20 @@ protected:
 		return sf::IntRect{ sprite.getTextureRect().position + offset, sprite.getTextureRect().size };
 	}
 
+	void releaseGhost(GhostHouseEntityEnum g);
+
 protected:
+
 	GameState gameState;
+
+	GhostHouseController ghostHouse;
+
+	ScatterChaseGlobalCycle globalStateCycle;
 
 	std::unique_ptr<GameLevelGrid> gameGrid;
 	std::unique_ptr<GridEntity> pacman;
-	std::vector<std::unique_ptr<GridEntity>> ghosts;
+	//std::vector<std::unique_ptr<GridEntity>> ghosts;
+	std::unordered_map<GhostHouseEntityEnum,std::unique_ptr<GridEntity>> ghosts;
 	sf::Font debugFont;
 	sf::Text* debugText;
 	Timer frightenedTimer;

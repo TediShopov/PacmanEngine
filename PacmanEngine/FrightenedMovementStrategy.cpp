@@ -34,11 +34,11 @@ DirectionEnum FrightenedMovementStrategy::reachNextValidDirectoinClockwise(const
     //WARNING: this code only work if the enum itself declared direction clockwise
     for (size_t i = 0; i < 4; i++)
     {
-        int directionNum = (int)startingDir + i;
-        directionNum = directionNum % 4;
+        int directionNum = ((int)startingDir + i) % 4;
         DirectionEnum directionClockwise = (DirectionEnum)(directionNum);
 		if (canTraverseInDirection(self, nextTile, directionClockwise))
 			return directionClockwise;
     }
+    return UP;
 }
 
