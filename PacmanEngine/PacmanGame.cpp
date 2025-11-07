@@ -196,13 +196,13 @@ void PacmanGame::fixedUpdate(float dt)
 #ifdef _DEBUG
 
 	if (input->isKeyDown((int)sf::Keyboard::Key::P))
-		eatPill();
+		eatPowerPill();
 	else if (input->isKeyDown((int)sf::Keyboard::Key::O))
-		changeAllGhostsState(Scatter);
+		changeAllActiveGhostStates(Scatter);
 	else if (input->isKeyDown((int)sf::Keyboard::Key::I))
-		changeAllGhostsState(Chase);
+		changeAllActiveGhostStates(Chase);
 	else if (input->isKeyDown((int)sf::Keyboard::Key::U))
-		changeAllGhostsState(Dead);
+		changeAllActiveGhostStates(Dead);
 
 	if (input->isKeyDown((int)sf::Keyboard::Key::J))
 		this->gameGrid->gridTileDimensions.x += 10 * dt;
