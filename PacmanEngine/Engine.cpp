@@ -23,8 +23,6 @@ Engine::Engine() :
 	window(std::make_unique<WindowSFML>()),
 	input(std::make_unique<Input>())
 {
-	this->debugFont.openFromFile("../assets/arial.ttf");
-
 	init();
 }
 

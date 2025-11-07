@@ -14,7 +14,7 @@ sf::Vector2i ChaseMovementStrategy::computeDesiredDirectionToReach(const GridEnt
     auto currentTile = self.gridPosition ;
 
     if(lastComtutedFor == currentTile)
-        return self.desiredDirecton;
+        return self.getDesiredDirection();
 
     std::vector<DirectionEnum> walkableDirections;
 
@@ -47,7 +47,7 @@ sf::Vector2i ChaseMovementStrategy::computeDesiredDirectionToReach(const GridEnt
     if (walkableDirections.size() <= 0)
     {
         lastComtutedFor = currentTile;
-        return self.desiredDirecton;
+        return self.getDesiredDirection();
 
     }
     else 

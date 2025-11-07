@@ -24,7 +24,7 @@ class PacmanGame :
 	const std::string SpritesheetString = "SpriteSheet";
 
 	const uint16_t ScorePerDot = 10;
-	const uint16_t ScorePerGhost = 10;
+	const uint16_t ScorePerGhost = 200;
 
 	const std::unordered_map<PacManEntityEnum, std::string> entityIdToSprite{
 		{PacManEntityEnum::Pacman,PacmanString},
@@ -56,12 +56,14 @@ protected:
 	void setWinCondition();
 	void initLabels();
 
-
 	//Game Logic Events
 
 	void eatPowerPill();
 
 	void releaseGhost(GhostHouseEntityEnum g);
+
+	//
+	void resolveCollision();
 
 	//Helpers
 
@@ -89,9 +91,6 @@ protected:
 	std::unordered_map<GhostHouseEntityEnum, std::unique_ptr<Ghost>> ghosts;
 
 	sf::Font debugFont;
-//	sf::Text* debugText;
-//	sf::Text* scoreText;
-//	sf::Text* finalText;
 	std::unique_ptr<sf::Text> debugText;
 	std::unique_ptr<sf::Text> scoreText;
 	std::unique_ptr<sf::Text> finalText;

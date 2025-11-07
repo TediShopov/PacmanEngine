@@ -5,7 +5,7 @@
 sf::Vector2i InputMovementStrategy::computeDesiredDirection(const GridEntity& self) const
 {
 	auto grid = self.levelGrid;
-	sf::Vector2i desiredDirection = self.desiredDirecton;
+	sf::Vector2i desiredDirection = self.getDesiredDirection();
 	if (input->isKeyDown((int)sf::Keyboard::Key::A))
 		desiredDirection = GameLevelGrid::Directions.at(LEFT);
 	else if (input->isKeyDown((int)sf::Keyboard::Key::D))

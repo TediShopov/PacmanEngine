@@ -211,62 +211,10 @@ void PacmanGame::fixedUpdate(float dt)
 	else if (input->isKeyDown((int)sf::Keyboard::Key::L))
 		this->gameGrid->gridTileDimensions.x -= 1 * dt;
 
-	//this->gameGrid->tileToSpriteMap.at(GameLevelGrid::TileType::Dot).scale({ 0.9,0.9 });
 #endif // _DEBUG
 
 	//Game Collision
-	using Tile = GameLevelGrid::TileType;
-
-	//Game Grid- Pacman Collision
-	if (gameGrid->at(pacman->gridPosition) == Tile::Dot)
-	{
-		score += ScorePerDot;
-		ghostHouse.onDotEaten();
-		--dotsRemaining;
-		if (dotsRemaining <= 0)
-		{
-			gameState = GameState::Won;
-			setPaused(true);
-		}
-		gameGrid->set(pacman->gridPosition, Tile::Empty);
-	}
-	if (gameGrid->at(pacman->gridPosition) == Tile::PowerPill)
-	{
-		changeAllActiveGhostStates(Frightened);
-		gameGrid->set(pacman->gridPosition, Tile::Empty);
-	}
-
-	//Game Grid - Ghost collision
-	for (auto& [entity, ghost] : ghosts)
-	{
-		if (ghost->getState() == Dead && ghost->gridPosition == ghost->getRespawnTile() && ghost->approximatelyNearCenter(2.0f))
-		{
-			//The ghost might enter scatter mode depening on timer ?
-			ghost->changeState(Spawning);
-			ghost->desiredDirecton = GameLevelGrid::Directions.at(UP);
-			ghost->currentDirecton = GameLevelGrid::Directions.at(UP);
-		}
-		if (ghost->getState() == Spawning && ghost->gridPosition == gameGrid->ghostHouseExit && ghost->approximatelyNearCenter(2.0f))
-		{
-			ghost->changeState(globalStateCycle.getCurrentGlobalState());
-		}
-		//Pacman-ghost collision
-		if (pacman->gridPosition == ghost->gridPosition)
-		{
-			//If ghost frightened pacman eats ghost
-			if (ghost->getState() == Frightened)
-			{
-				ghost->changeState(Dead);
-				//Get points
-				score += ScorePerGhost;
-			}
-			else if (ghost->getState() != Dead)
-			{
-				this->gameState = GameState::Lost;
-				setPaused(true);
-			}
-		}
-	}
+	resolveCollision();
 }
 
 void PacmanGame::render()
@@ -360,6 +308,60 @@ void PacmanGame::releaseGhost(GhostHouseEntityEnum ghost)
 	if (found != ghosts.end())
 	{
 		found->second->changeState(GhostStateEnum::Spawning);
+	}
+}
+
+void PacmanGame::resolveCollision()
+{
+	//Game Collision
+	using Tile = GameLevelGrid::TileType;
+
+	//Game Grid- Pacman Collision
+	if (gameGrid->at(pacman->gridPosition) == Tile::Dot)
+	{
+		score += ScorePerDot;
+		ghostHouse.onDotEaten();
+		--dotsRemaining;
+		if (dotsRemaining <= 0)
+		{
+			gameState = GameState::Won;
+			setPaused(true);
+		}
+		gameGrid->set(pacman->gridPosition, Tile::Empty);
+	}
+	if (gameGrid->at(pacman->gridPosition) == Tile::PowerPill)
+	{
+		changeAllActiveGhostStates(Frightened);
+		gameGrid->set(pacman->gridPosition, Tile::Empty);
+	}
+
+	//Game Grid - Ghost collision
+	for (auto& [entity, ghost] : ghosts)
+	{
+		if (ghost->getState() == Dead && ghost->gridPosition == ghost->getRespawnTile() && ghost->approximatelyNearCenter(2.0f))
+		{
+			ghost->changeState(Spawning);
+		}
+		if (ghost->getState() == Spawning && ghost->gridPosition == gameGrid->ghostHouseExit && ghost->approximatelyNearCenter(2.0f))
+		{
+			ghost->changeState(globalStateCycle.getCurrentGlobalState());
+		}
+		//Pacman-ghost collision
+		if (pacman->gridPosition == ghost->gridPosition)
+		{
+			//If ghost frightened pacman eats ghost
+			if (ghost->getState() == Frightened)
+			{
+				ghost->changeState(Dead);
+				//Get points
+				score += ScorePerGhost;
+			}
+			else if (ghost->getState() != Dead)
+			{
+				this->gameState = GameState::Lost;
+				setPaused(true);
+			}
+		}
 	}
 }
 

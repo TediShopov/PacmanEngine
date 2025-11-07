@@ -6,7 +6,7 @@ sf::Vector2i FrightenedMovementStrategy::computeDesiredDirection(const GridEntit
     auto currentTile = self.gridPosition ;
 
     if(lastComtutedFor == currentTile)
-        return self.desiredDirecton;
+        return self.getDesiredDirection();
 
     DirectionEnum randomDirection = computeRandomDirection();
 

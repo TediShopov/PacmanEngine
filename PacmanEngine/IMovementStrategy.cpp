@@ -10,7 +10,7 @@
     using GT = GameLevelGrid::TileType;
 
     bool canTraverse = self.canTraverse(grid->at(tileInDir));
-    bool isNotReverseDirection = !GameLevelGrid::areDirectionRevererse(dirVecor, self.currentDirecton);
+    bool isNotReverseDirection = !GameLevelGrid::areDirectionRevererse(dirVecor, self.getCurrentDirection());
 
     return canTraverse && isNotReverseDirection;
 }

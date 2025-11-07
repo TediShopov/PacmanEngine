@@ -10,10 +10,10 @@
  sf::Vector2i PinkyMovementStrategy::computeDesiredDirection(const GridEntity& self) const
 {
 	 sf::Vector2i targetCutOffTile;
-	 if (target->currentDirecton != GameLevelGrid::Directions.at(UP)) 
+	 if (target->getCurrentDirection() != GameLevelGrid::Directions.at(UP)) 
 	 {
 		 //Offset four tiles in the current diretoin
-		 targetCutOffTile = target->gridPosition + (target->currentDirecton * 4);
+		 targetCutOffTile = target->gridPosition + (target->getCurrentDirection() * 4);
 	 }
 	 else 
 	 {

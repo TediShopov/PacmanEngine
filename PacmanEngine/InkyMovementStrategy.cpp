@@ -15,7 +15,7 @@ sf::Vector2i InkyMovementStrategy::computeDesiredDirection(const GridEntity& sel
 	const int blinkyDistanceMultiplier = 2;
 	sf::Vector2i offsetTargetCoordinate;
 
-	if (target->currentDirecton == GameLevelGrid::Directions.at(UP))
+	if (target->getCurrentDirection() == GameLevelGrid::Directions.at(UP))
 	{
 		offsetTargetCoordinate =
 			target->gridPosition 
@@ -24,7 +24,7 @@ sf::Vector2i InkyMovementStrategy::computeDesiredDirection(const GridEntity& sel
 	}
 	else {
 		offsetTargetCoordinate 
-			= target->gridPosition + (targetTileOffset * target->currentDirecton);
+			= target->gridPosition + (targetTileOffset * target->getCurrentDirection());
 	}
 
 	sf::Vector2i targetCoordinate = ally->gridPosition + (offsetTargetCoordinate - ally->gridPosition) * 2;
