@@ -92,7 +92,7 @@ void PacmanGame::initPacman()
 {
 	if(!pacman)
 		pacman = std::make_unique<Pacman>(gameGrid.get(), input.get(), spriteMap.at(PacmanString).get());
-	gameGrid->playerSpawnPoint = { 1,1 };
+	//gameGrid->playerSpawnPoint = { 1,1 };
 	pacman->gridPosition = { gameGrid->playerSpawnPoint };
 	pacman->worldPos = gameGrid->getPixelCoordinates(gameGrid->playerSpawnPoint);
 	pacman->movementSpeed = 2;
@@ -173,7 +173,7 @@ void PacmanGame::initGameLevelGrid()
 	auto win = sfmlWindow->raw();
 
 	using TT = GameLevelGrid::TileType;
-	this->gameGrid->loadLevelCsf("../assets/PacLevel4.csv");
+	this->gameGrid->loadLevelCsf("../assets/PacLevel6.csv");
 }
 
 void PacmanGame::initSprites()

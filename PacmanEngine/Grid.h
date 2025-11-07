@@ -140,6 +140,12 @@ public:
 				else if (token == "H")
 				{
 					gridData.push_back(TileType::Wall);
+					//this->playerSpawnPoint = { cols,rows };
+
+				}
+				else if (token == "S")
+				{
+					gridData.push_back(TileType::Empty);
 					this->playerSpawnPoint = { cols,rows };
 
 				}
@@ -147,6 +153,7 @@ public:
 //				else if (token == "H") row.push_back(TileType::GhostHouse);
 				//else if (token == "P") gridData.push_back(TIle)
 				else gridData.push_back(TileType::Empty);
+
 				cols++;
 			}
 			rows++;
@@ -207,7 +214,7 @@ public:
 
 	constexpr int getFlatIndex(int row, int col) const
 	{
-		return row * cols + col;
+		return row * (cols) + col;
 
 	}
 	//Return the center of the tile in pixel coordinates
