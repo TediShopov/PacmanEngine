@@ -43,11 +43,13 @@ void PacmanGame::init()
 	initGameLevelGrid();
 
 	//initWinCondition():
-	for (size_t row = 0; row <= gameGrid->gridTileDimensions.y; row++)
+	dotsRemaining = 0;
+	for (int row = 0; row <= gameGrid->getGridDimensions().y; row++)
 	{
-		for (size_t col = 0; col <= gameGrid->gridTileDimensions.x; col++)
+		for (int col = 0; col <= gameGrid->getGridDimensions().x; col++)
 		{
-			if(gameGrid->at(row,col) == GameLevelGrid::TileType::Dot)
+			if (gameGrid->at(sf::Vector2i{ col,row }) == GameLevelGrid::TileType::Dot)
+			//if(gameGrid->at(row,col) == GameLevelGrid::TileType::Dot)
 				dotsRemaining++;
 		}
 	}
@@ -56,7 +58,7 @@ void PacmanGame::init()
 	//Init debug grid entity
 	initPacman();
 	//Create Ghosts
-	initGhosts();
+	//initGhosts();
 
 	ghostHouse.resetLevel();
 	ghostHouse.onGhostReleased = [&](GhostHouseEntityEnum e) {releaseGhost(e); };
@@ -416,6 +418,7 @@ void PacmanGame::update(float lag)
 	std::string debugString = "";
 	debugString += "Character Pixel Pos X:" + std::to_string(pacman->worldPos.x) + "Y: " + std::to_string(pacman->worldPos.y) + "\n";
 	debugString += "Character Grid Coord X:" + std::to_string(pacman->gridPosition.x) + "Y: " + std::to_string(pacman->gridPosition.y) + "\n";
+	debugString += "To Collect" + std::to_string(dotsRemaining);
 	debugString += "SCORE: " + std::to_string(score) + "\n";
 
 	switch (globalStateCycle.getCurrentGlobalState())
