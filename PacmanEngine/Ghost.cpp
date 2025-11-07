@@ -18,6 +18,28 @@ respawnTile(sf::Vector2i{0,0}), scatterTile(sf::Vector2i{0,0}), ally(nullptr)
 	applyState(state);
 	}
 
+
+Ghost::Ghost(const Ghost& other) {
+	(*this) = other;
+}
+Ghost& Ghost::operator= (const Ghost& other)
+{
+	this->levelGrid = other.levelGrid;
+	this->sprite = other.sprite;
+	this->gridPosition = other.gridPosition;
+	this->worldPos = other.worldPos;
+	this->movementSpeed = other.movementSpeed;
+	this->ally = other.ally;
+	this->prefferedChaseStrategy = other.prefferedChaseStrategy;
+	this->state = other.state;
+	this->target = other.target;
+	this->respawnTile = other.respawnTile;
+	this->scatterTile = other.scatterTile;
+	this->applyState(state);
+	return *this;
+
+}
+
 inline bool Ghost::canTraverse(GameLevelGrid::TileType tile) const
 {
 	using tileType = GameLevelGrid::TileType;
