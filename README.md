@@ -12,5 +12,5 @@ A single-level Pac-Man clone built with C++17 and SFML3, featuring authentic gho
 
 
 
-The project was tested on Visual Studio 2022, Debug, x86
+The project was tested on Visual Studio 2022, Debug and Release, x86 
 
