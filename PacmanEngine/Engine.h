@@ -13,7 +13,7 @@ class Engine
 {
 	const std::string DefaultEngineName = "PacmanEngine";
 	const sf::Vector2u DefaultEngineWindowSize = { 448,576 };
-	const uint16_t ScorePerPellet = 10;
+	const uint16_t ScorePerDot = 10;
 	const uint16_t ScorePerGhost = 10;
 
 public:

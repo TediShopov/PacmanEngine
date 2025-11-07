@@ -57,6 +57,13 @@ public:
 	~Ghost() = default;
 
 	bool canTraverse(GameLevelGrid::TileType tile) const override;
+	static bool isStateActive(GhostStateEnum e)
+	{
+		return e == GhostStateEnum::Scatter
+			|| e == GhostStateEnum::Chase
+			|| e == GhostStateEnum::Frightened;
+
+	}
 
 
 

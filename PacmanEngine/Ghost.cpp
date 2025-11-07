@@ -8,7 +8,7 @@ Ghost::Ghost(
 	sf::Sprite* sprite,
 	const GridEntity* target,
 	GhostMovementEnum prefferecChase) :
-GridEntity(), target(target), state(Spawning), prefferedChaseStrategy(BlinkyMovement),
+GridEntity(), target(target), state(Idle), prefferedChaseStrategy(BlinkyMovement),
 respawnTile(sf::Vector2i{0,0}), scatterTile(sf::Vector2i{0,0}), ally(nullptr)
 
 	{

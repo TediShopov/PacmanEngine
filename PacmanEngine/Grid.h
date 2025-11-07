@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <fstream>
 #include <sstream>
+#include "PacManEntities.h"
 
 enum DirectionEnum {
     UP,
@@ -15,13 +16,43 @@ class GameLevelGrid
 {
 
 public:
-	sf::Vector2i blinkySpawnPoint;
-	sf::Vector2i inkySpawnPoint;
-	sf::Vector2i clydeSpawnPoint;
-	sf::Vector2i pinkySpawnPoint;
+	std::unordered_map<PacManEntityEnum,sf::Vector2i> spawnPoints;
+	std::unordered_map<PacManEntityEnum,sf::Vector2i> scatterPoints;
+
+	void initScatterPoints()
+	{
+		auto gridDim = getGridDimensions();
+		scatterPoints.insert({ PacManEntityEnum::Blinky,{ gridDim.x, 0 } });
+		scatterPoints.insert({ PacManEntityEnum::Pinky,{ 0, 0 } });
+		scatterPoints.insert({ PacManEntityEnum::Inky,{ gridDim.x, gridDim.y } });
+		scatterPoints.insert({ PacManEntityEnum::Clyde,{ 0, gridDim.y + 5 } });
+	}
+
+
+	sf::Vector2i getScatterTile(PacManEntityEnum e)
+	{
+		auto foundSpawnPoint = scatterPoints.find(e);
+		if (foundSpawnPoint != scatterPoints.end())
+			return foundSpawnPoint->second;
+		return {};
+
+	}
+	sf::Vector2i getSpawnTile(PacManEntityEnum e)
+	{
+		auto foundSpawnPoint = spawnPoints.find(e);
+		if (foundSpawnPoint != spawnPoints.end())
+			return foundSpawnPoint->second;
+		return {};
+
+	}
+
+//	sf::Vector2i blinkySpawnPoint;
+//	sf::Vector2i inkySpawnPoint;
+//	sf::Vector2i clydeSpawnPoint;
+//	sf::Vector2i pinkySpawnPoint;
 	sf::Vector2i ghostHouseEntrance;
 	sf::Vector2i ghostHouseExit;
-	sf::Vector2i playerSpawnPoint;
+//sf::Vector2i playerSpawnPoint;
 
 	inline static const std::unordered_map<DirectionEnum, sf::Vector2i> Directions{
 		{UP,		sf::Vector2i(0,-1)},
@@ -37,8 +68,8 @@ public:
 	sf::Vector2f gridTileDimensions;
 	GameLevelGrid(int rows, int cols, sf::Vector2f gridDims) : Position({ 0,0 }), rows(rows), cols(cols), gridTileDimensions(gridDims)
 	{
-
 		gridData = std::vector<TileType>(rows * cols, TileType::Dot);
+		initScatterPoints();
 	}
 
 
@@ -88,6 +119,9 @@ public:
 		this->gridData.assign(tiles.size(), TileType::Empty);
 		for (size_t i = 0; i < tiles.size(); i++)
 			this->gridData[i] = tiles[i];
+
+		initScatterPoints();
+
 	}
 
 
@@ -119,23 +153,23 @@ public:
 				else if (token == "P")
 				{
 					gridData.push_back(TileType::Empty);
-					this->pinkySpawnPoint = { cols,rows };
+					this->spawnPoints.insert({ PacManEntityEnum::Pinky,sf::Vector2i{cols,rows} });
 				}
 				else if (token == "I")
 				{
 					gridData.push_back(TileType::Empty);
-					this->inkySpawnPoint = { cols,rows };
+					this->spawnPoints.insert({ PacManEntityEnum::Inky,sf::Vector2i{cols,rows} });
 				}
 				else if (token == "B")
 				{
 					gridData.push_back(TileType::Empty);
-					this->blinkySpawnPoint = { cols,rows };
+					this->spawnPoints.insert({ PacManEntityEnum::Blinky,sf::Vector2i{cols,rows} });
 					this->ghostHouseExit = { cols,rows };
 				}
 				else if (token == "C")
 				{
 					gridData.push_back(TileType::Empty);
-					this->clydeSpawnPoint = { cols,rows };
+					this->spawnPoints.insert({ PacManEntityEnum::Clyde,sf::Vector2i{cols,rows} });
 				}
 				else if (token == "H")
 				{
@@ -146,7 +180,7 @@ public:
 				else if (token == "S")
 				{
 					gridData.push_back(TileType::Empty);
-					this->playerSpawnPoint = { cols,rows };
+					this->spawnPoints.insert({ PacManEntityEnum::Pacman,sf::Vector2i{cols,rows} });
 
 				}
 //				else if (token == "G") row.push_back(TileType::GhostGate);
@@ -160,6 +194,8 @@ public:
 		}
 		this->cols = cols;
 		this->rows = rows;
+
+		initScatterPoints();
 	}
 
 
