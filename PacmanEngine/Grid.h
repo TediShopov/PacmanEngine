@@ -22,10 +22,18 @@ public:
 	void initScatterPoints()
 	{
 		auto gridDim = getGridDimensions();
-		scatterPoints.insert({ PacManEntityEnum::Blinky,{ gridDim.x, 0 } });
-		scatterPoints.insert({ PacManEntityEnum::Pinky,{ 0, 0 } });
-		scatterPoints.insert({ PacManEntityEnum::Inky,{ gridDim.x, gridDim.y } });
-		scatterPoints.insert({ PacManEntityEnum::Clyde,{ 0, gridDim.y + 5 } });
+		scatterPoints[PacManEntityEnum::Blinky] = sf::Vector2i{ gridDim.x, 0 };
+		scatterPoints[PacManEntityEnum::Pinky] = sf::Vector2i{ 0, 0 };
+		scatterPoints[PacManEntityEnum::Inky] = sf::Vector2i{ gridDim.x, gridDim.y };
+		scatterPoints[PacManEntityEnum::Clyde] = sf::Vector2i{ 0, gridDim.y + 5 };
+
+		//OLD CODE does NOT overwrite the position of the scatter points if already present.
+		// The point were already present on instance construction 
+		// and were not corretly updated on reading the CSV file.
+//		scatterPoints.insert({ PacManEntityEnum::Blinky,{ gridDim.x, 0 } });
+//		scatterPoints.insert({ PacManEntityEnum::Pinky,{ 0, 0 } });
+//		scatterPoints.insert({ PacManEntityEnum::Inky,{ gridDim.x, gridDim.y } });
+//		scatterPoints.insert({ PacManEntityEnum::Clyde,{ 0, gridDim.y + 5 } });
 	}
 
 
