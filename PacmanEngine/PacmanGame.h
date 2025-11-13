@@ -26,6 +26,8 @@ class PacmanGame :
 	const uint16_t ScorePerDot = 10;
 	const uint16_t ScorePerGhost = 200;
 
+	const float FrightenedTimeSeconds = 3.0f;
+
 	const std::unordered_map<PacManEntityEnum, std::string> entityIdToSprite{
 		{PacManEntityEnum::Pacman,PacmanString},
 		{PacManEntityEnum::Blinky,BlinkyString},

@@ -14,7 +14,7 @@ score(0), gameState(GameState::Paused)
 {
 	setPaused(true);
 	this->debugFont.openFromFile("../assets/arial.ttf");
-	frightenedTimer = Timer(1.0);
+	frightenedTimer = Timer(FrightenedTimeSeconds);
 	frightenedTimer.onTimerFinished([&](Timer* t) {this->revertToChaseAfterFrightened(t); });
 
 	init();
@@ -248,6 +248,7 @@ void PacmanGame::eatPowerPill()
 	changeAllActiveGhostStates(Frightened);
 	frightenedTimer.reset();
 	frightenedTimer.resume();
+	gameGrid->set(pacman->gridPosition, GameLevelGrid::TileType::Empty);
 }
 
 void PacmanGame::revertToChaseAfterFrightened(Timer* t)
@@ -331,8 +332,9 @@ void PacmanGame::resolveCollision()
 	}
 	if (gameGrid->at(pacman->gridPosition) == Tile::PowerPill)
 	{
-		changeAllActiveGhostStates(Frightened);
-		gameGrid->set(pacman->gridPosition, Tile::Empty);
+		eatPowerPill();
+		//changeAllActiveGhostStates(Frightened);
+		//gameGrid->set(pacman->gridPosition, Tile::Empty);
 	}
 
 	//Game Grid - Ghost collision
@@ -367,6 +369,7 @@ void PacmanGame::resolveCollision()
 
 void PacmanGame::update(float lag)
 {
+
 	if (input->isKeyDown((int)sf::Keyboard::Key::G))
 		//if (input->isPressed((int)sf::Keyboard::Key::G))
 	{
