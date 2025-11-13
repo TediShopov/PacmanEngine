@@ -20,7 +20,8 @@ public:
 	 virtual bool canTraverse(GameLevelGrid::TileType type) const;
 
 	float movementSpeed;
-	sf::Sprite* sprite;
+	//sf::Sprite* sprite;
+	std::shared_ptr<sf::Sprite> sprite;
 
 
 	sf::Vector2i gridPosition;

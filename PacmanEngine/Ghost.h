@@ -36,7 +36,7 @@ public:
 
 	Ghost(
 		const GameLevelGrid* gameGrid,
-		sf::Sprite* sprite,
+		std::shared_ptr<sf::Sprite> sprite,
 		const GridEntity* target,
 		GhostMovementEnum prefferedChase
 	);

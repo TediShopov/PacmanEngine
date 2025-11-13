@@ -5,7 +5,7 @@
 
 Ghost::Ghost(
 	const GameLevelGrid* gameGrid,
-	sf::Sprite* sprite,
+	std::shared_ptr<sf::Sprite> sprite,
 	const GridEntity* target,
 	GhostMovementEnum prefferecChase) :
 GridEntity(), target(target), state(Idle), prefferedChaseStrategy(BlinkyMovement),

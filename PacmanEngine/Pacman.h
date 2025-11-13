@@ -1,11 +1,10 @@
 #pragma once
 #include "GridEntity.h"
 #include "InputMovementStrategy.h"
-class Pacman :
-    public GridEntity
+class Pacman : public GridEntity
 {
 public:
-	Pacman(const GameLevelGrid* gameGrid,const IInput* input, sf::Sprite* sprite) : GridEntity()
+	Pacman(const GameLevelGrid* gameGrid,const IInput* input, std::shared_ptr<sf::Sprite> sprite) : GridEntity()
 	{
 		this->movementStrategy = std::make_unique<InputMovementStrategy>(input);
 		this->sprite = sprite;

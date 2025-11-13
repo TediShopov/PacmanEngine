@@ -45,7 +45,7 @@ void PacmanGame::reset()
 void PacmanGame::initPacman()
 {
 	if (!pacman)
-		pacman = std::make_unique<Pacman>(gameGrid.get(), input.get(), spriteMap.at(PacmanString).get());
+		pacman = std::make_unique<Pacman>(gameGrid.get(), input.get(), spriteMap.at(PacmanString));
 	//gameGrid->getSpawnTile(PacManEntityEnum::Pacman) = { 1,1 };
 	pacman->gridPosition = { gameGrid->getSpawnTile(PacManEntityEnum::Pacman) };
 	pacman->worldPos = gameGrid->getPixelCoordinates(gameGrid->getSpawnTile(PacManEntityEnum::Pacman));
@@ -266,11 +266,11 @@ std::unique_ptr<Ghost> PacmanGame::createGhostEntity(PacManEntityEnum entity)
 	auto gridDim = gameGrid->getGridDimensions();
 	auto ghost = std::make_unique<Ghost>(
 		gameGrid.get(),
-		spriteMap.at(entityIdToSprite.at(entity)).get(),
+		spriteMap.at(entityIdToSprite.at(entity)),
 		pacman.get(),
 		BlinkyMovement
 	);
-	ghost->sprite = spriteMap.at(entityIdToSprite.at(entity)).get();
+	ghost->sprite = spriteMap.at(entityIdToSprite.at(entity));
 	ghost->scatterTile = gameGrid->getScatterTile(entity);
 	ghost->respawnTile = gameGrid->getSpawnTile(entity);
 	ghost->gridPosition = ghost->respawnTile;

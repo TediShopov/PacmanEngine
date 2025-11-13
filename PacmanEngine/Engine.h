@@ -32,7 +32,8 @@ public:
 protected:
 	//Resource management by string alias
 	std::unordered_map<std::string, std::unique_ptr<sf::Texture>> textureMap;
-	std::unordered_map<std::string, std::unique_ptr<sf::Sprite>> spriteMap;
+	//std::unordered_map<std::string, std::unique_ptr<sf::Sprite>> spriteMap;
+	std::unordered_map<std::string, std::shared_ptr<sf::Sprite>> spriteMap;
 	
 	//60hz game loop by default
 	const float fixedTimeStep = 0.0166f;
