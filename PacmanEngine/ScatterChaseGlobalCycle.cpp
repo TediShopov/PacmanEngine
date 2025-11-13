@@ -6,6 +6,9 @@ ScatterChaseGlobalCycle::ScatterChaseGlobalCycle() : currentState(Scatter)
 
  void ScatterChaseGlobalCycle::init(std::initializer_list<float> scatterChaseTimings)
 {
+	 this->currentState = Scatter;
+
+
 	while (scatterChaseSequence.empty() != true)
 		scatterChaseSequence.pop();
 
